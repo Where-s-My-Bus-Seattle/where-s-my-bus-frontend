@@ -192,9 +192,9 @@ export default class VoiceInput extends React.Component {
 }
 const styles = StyleSheet.create({
     voiceSubmitButton: {
-        width: width / 1.3,
-        height: width / 1.3,
+        width: width / 1.7,
+        height: width / 1.7,
         alignSelf: "center",
-        margin: "10%"
+        margin: "8%"
     },
 })

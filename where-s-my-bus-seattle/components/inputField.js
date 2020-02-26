@@ -1,4 +1,3 @@
-import { render } from "react-dom";
 import React from "react";
 import {
     View,
@@ -17,7 +16,7 @@ export default function InputField(props) {
     const [busRoute, updateBusRoute] = React.useState("");
 
     async function submitHandler() {
-        let url = `http://138.68.251.254:8000/api/v1/47.6183684/-122.3517913/D`;
+        let url = `http://138.68.251.254:8000/api/v1/${props.lat}/${props.long}/D`;
         console.log(url);
 
         const response = await fetch(url);
@@ -50,11 +49,6 @@ export default function InputField(props) {
 
         // });
     }
-    
-
-    function returnHome() {
-        setMapDisplay(false);
-    }
 
     return (
         <>
@@ -73,6 +67,7 @@ export default function InputField(props) {
         </>
     )
 }
+
 const styles = StyleSheet.create({
     inputFieldContainer: {
         alignItems: "center",

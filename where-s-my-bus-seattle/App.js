@@ -120,8 +120,8 @@ export default class App extends React.Component {
         if (this.state.displayMap) {
             busmap = (
                 <BusMap
-                    lat={this.state.lat}
-                    long={this.state.long}
+                    // lat={this.state.lat}
+                    // long={this.state.long}
                     closest={this.state.closestData}
                     nextClosest={this.state.nextClosestData}
                 />
@@ -145,7 +145,7 @@ export default class App extends React.Component {
             heading = (<></>)
         } else {
             textInput = (
-                <InputField doneHandler={this.handleInputField}/>
+                <InputField doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
             );
             homeButton = (<></>)
             busmap = (<></>)
@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     },
 });
 
-console.disableYellowBox = true;
+// TODO: what is this?
+// console.disableYellowBox = true;
 
 
