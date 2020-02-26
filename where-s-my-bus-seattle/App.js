@@ -14,7 +14,6 @@ import TextCarousel from "react-native-text-carousel";
 // https://fostermade.co/blog/making-speech-to-text-work-with-react-native-and-expo
 // Guide used to help with recording
 
-
 let homeButton;
 let button;
 let busmap;
@@ -48,13 +47,14 @@ export default class App extends React.Component {
             },
             serverBusRoute: "",
             location: null,
-            lat: 47.5899628,
-            long: -122.2691655,
+            lat: null,
+            long: null,
+            // lat: 47.5899628,
+            // long: -122.2691655,
             errorMessage: null,
             displayMap: false,
         };
         this.handleInputField = this.handleInputField.bind(this)
-        this._getLocationAsync();   
     }
 
     componentDidMount() {
@@ -74,6 +74,7 @@ export default class App extends React.Component {
         this.setState({ location });
         this.setState({ lat: location.coords.latitude });
         this.setState({ long: location.coords.longitude });
+        console.log('============GOT LOCATION=================')
     };
     
     handleInputField(data){
@@ -104,8 +105,6 @@ export default class App extends React.Component {
         })
     }
 
-    
-
     render() {
         if (this.state.errorMessage){
             bottomString = (
@@ -119,7 +118,13 @@ export default class App extends React.Component {
                     Or type your bus number and tap
                 </Text>
             ) 
-
+        }
+        if (this.state.lat && this.state.long){
+            button = (
+                <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+            );
+        } else {
+            button = (<></>);
         }
         if (this.state.displayMap) {
             busmap = (
@@ -173,9 +178,9 @@ export default class App extends React.Component {
             heading = (
                 <Text style={styles.appTitleHeader}>Where's My Bus?</Text>
             )
-            button = (
-                <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
-            );
+            // button = (
+            //     <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+            // );
         }
 
         return (
@@ -232,6 +237,6 @@ const styles = StyleSheet.create({
 });
 
 // TODO: what is this?
-// console.disableYellowBox = true;
+console.disableYellowBox = true;
 
 

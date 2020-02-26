@@ -55,6 +55,7 @@ export default class VoiceInput extends React.Component {
               });
             console.log('=WAV being sent=');
             console.log(wav._parts[0][1]);
+            console.log('lat/lon: ', this.lat, this.long)
             const response = await fetch(`http://138.68.251.254:8000/api/v1/${this.lat}/${this.long}`, {
                 method: 'POST',
                 body: wav,
@@ -78,7 +79,7 @@ export default class VoiceInput extends React.Component {
                     next_closest_lat: json.next_closest_stop.next_closest_lat,
                     next_closest_lon: json.next_closest_stop.next_closest_lon
                 },
-                serverBusRoute: json.route
+                route: json.route
             }
             this.doneHandler(busData)
 
