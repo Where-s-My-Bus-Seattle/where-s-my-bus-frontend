@@ -119,30 +119,26 @@ export default class App extends React.Component {
 
         if (this.state.displayMap) {
             busmap = (
-                <View style={styles.center2}>
-                    <BusMap
-                        lat={this.state.lat}
-                        long={this.state.long}
-                        closest={this.state.closestData}
-                        nextClosest={this.state.nextClosestData}
-                    />
-                </View>
-            );
-            textInput = (<></>)
-            homeButton = (
-                <View style={styles.bottom2}>
-                    <TouchableOpacity onPress={() => this.setState({displayMap: false})}>
-                        <Image source={require("./components/button_another.png")} />
-                    </TouchableOpacity>
-                </View>
-            );
-            results = (
-                <Results
-                    busNumber={this.state.serverBusRoute}
+                <BusMap
+                    lat={this.state.lat}
+                    long={this.state.long}
                     closest={this.state.closestData}
                     nextClosest={this.state.nextClosestData}
                 />
             );
+            homeButton = (
+                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false})}>
+                    <Image source={require("./components/button_another.png")} />
+                </TouchableOpacity>
+            );
+            results = (
+                <Results
+                busNumber={this.state.serverBusRoute}
+                closest={this.state.closestData}
+                nextClosest={this.state.nextClosestData}
+                />
+            );
+            textInput = (<></>)
             button = (<></>)
             bottomString = (<></>)
             textCarousel = (<></>)
@@ -155,176 +151,78 @@ export default class App extends React.Component {
             busmap = (<></>)
             results = (<></>)
             textCarousel = (
-                <TextCarousel>
-                    <TextCarousel.Item>
-                        <View style={styles.carouselContainer}>
+                <View style={styles.textCarousel}>
+                    <TextCarousel>
+                        <TextCarousel.Item>
                             <Text style={styles.opacityText}>
                                 Tap to speak
                             </Text>
-                        </View>
-                    </TextCarousel.Item>
-                    <TextCarousel.Item>
-                        <View style={styles.carouselContainer}>
+                        </TextCarousel.Item>
+                        <TextCarousel.Item>
                             <Text style={styles.opacityText}>
                                 When does "8" get here?
                             </Text>
-                        </View>
-                    </TextCarousel.Item>
-                </TextCarousel>
+                        </TextCarousel.Item>
+                    </TextCarousel>
+                </View>
             );
             heading = (
-                <View style={styles.top}>
-                    <View>
-                        <Text style={styles.header}>Where's My Bus?</Text>
-                    </View>
-                </View>
+                <Text style={styles.appTitleHeader}>Where's My Bus?</Text>
             )
             button = (
                 <VoiceInput doneHandler={this.handleInputField}/>
             );
             bottomString = (
-                <Text style={styles.opacityText2}>
+                <Text style={styles.opacityText}>
                     Or type your bus number and tap
                 </Text>
             )
-                        
-    
-            //             <View style={styles.bottom}>
-            //                 
-            //                 <TextInput
-            //                     style={styles.input}
-            //                     onChangeText={text => updateBusRoute(text)}
-            //                     value={busRoute}
-            //                 />
-            //                 <TouchableHighlight onPress={() => submitHandler()}>
-            //                     <Image
-            //                         style={styles.submitButton2}
-            //                         source={require("./button_search.png")}
-            //                     />
-            //                 </TouchableHighlight>
-            //             </View>
-            //         </KeyboardAvoidingView>
-            //     </Fragment>
-            // );
         }
 
-        //             results = (
-        //                 <Results
-        //                     busNumber={busData.serverBusRoute}
-        //                     closest={busData.closestData}
-        //                     nextClosest={busData.nextClosestData}
-        //                 />
-        //             );
-                    // busmap = (
-                    //     <View style={styles.center2}>
-                    //         <BusMap
-                    //             lat={props.lat}
-                    //             long={props.long}
-                    //             closest={busData.closestData}
-                    //             nextClosest={busData.nextClosestData}
-                    //         />
-                    //     </View>
-                    // );
-        //         }
-        //             {
-        //             }
-        //             button = <></>;
-        //             homeButton = (
-        //                 <View style={styles.bottom2}>
-        //                     <TouchableOpacity onPress={() => returnHome()}>
-        //                         <Image source={require("./button_another.png")} />
-        //                     </TouchableOpacity>
-        //                 </View>
-        //             );
-        //         } else {
-        //             busmap = <></>;
-        //             button = 
-        //         }
-
-        // return (
-        //     <View style={styles.container}>
-        //         {button}
-        //         {results}
-        //         {busmap}
-        //         {homeButton}
-        //     </View>
-        // );
         return (
-            <Fragment>
-                    <KeyboardAvoidingView style={styles.container} behavior="position">
-                        <View>
-                            {heading}
-                            {textCarousel}
-                            {button}
-                            {bottomString}
-                            {textInput}
-                            {results}
-                            {busmap}
-                            {homeButton}
-                        </View>
-                    </KeyboardAvoidingView>
-            </Fragment>
-            
+            <KeyboardAvoidingView style={styles.mainViewContainer} behavior="position">
+                {heading}
+                {textCarousel}
+                {button}
+                {bottomString}
+                {textInput}
+                {results}
+                {busmap}
+                {homeButton}
+            </KeyboardAvoidingView>  
         );
     }
 }
-const { width } = Dimensions.get("screen");
 
 const styles = StyleSheet.create({
-    container: {
+    mainViewContainer: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
         paddingTop: Constants.statusBarHeight,
-        backgroundColor: "#54123B"
+        backgroundColor: "#54123B",
     },
-    paragraph: {
-        margin: 24,
-        fontSize: 18,
-        textAlign: "center"
-    },
-    center2: {
-        height: "50%",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    bottom2: {
-        height: "25%",
-        alignItems: "center",
-        justifyContent: "center"
+    textCarousel: {
+        height:8,
+        marginTop: "10%",
     },
     opacityText: {
         opacity: 0.2,
         color: "white",
         fontWeight: "bold",
-        fontSize: 20
+        fontSize: 20,
+        alignSelf: "center"
     },
-    carouselContainer: {
-        margin: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingBottom: 0
-    },
-    top: {
+    homeButton: {
         height: "25%",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
     },
-    header: {
+    appTitleHeader: {
         color: "#f7f5f5",
         fontWeight: "bold",
-        fontSize: 47
-    },
-    center: {
-        height: "35%",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    submitButton: {
-        alignItems: "center",
-        padding: 10,
-        width: width / 1.5,
-        height: width / 1.5
+        fontSize: 47,
+        alignSelf: "center",
+        marginTop: "5%"
     },
 });
 

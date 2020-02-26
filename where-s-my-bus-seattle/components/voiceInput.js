@@ -156,57 +156,45 @@ export default class VoiceInput extends React.Component {
     }
 
     render() {
-        return (
-            <View style={styles.center}>  
-                <Ripple
-                    rippleColor="rgb(52, 61, 235)"
-                    rippleDuration="2400"
-                    // rippleContainerBorderRadius="100" //aj commented this out
-                    rippleCentered="true"
-                    style={styles.submitButton}
-                    onPress={() => this.props.doneHandler(
-                        {
-                            closestData: {
-                                closestName: "47",
-                                closestDirection: "47",
-                                closestMinutes: "47",
-                                closestLat: "47",
-                                closestLon: "47",
-                            },        
-                            nextClosestData: {
-                                nextClosestName: "47",
-                                nextClosestDirection:
-                                    "47",
-                                nextClosestMinutes: "47",
-                                nextClosestLat: "47",
-                                nextClosestLon: "47",
-                            },
-                            serverBusRoute: "47",
-                            displayMap: true,
-                        }
-                    )}
-                    // onPressIn={() => props.handleOnPressIn()}
-                    // onPressOut={() => newHandlePressOut()}
-                >
-                    <Image
-                        style={styles.submitButton}
-                        source={require("./button.png")}
-                    />
-                </Ripple>
-            </View>
+        return ( 
+            <Ripple
+                rippleColor="rgb(52, 61, 235)"
+                rippleDuration="2400"
+                rippleCentered="true"
+                onPress={() => this.props.doneHandler(
+                    {
+                        closest_stop: {
+                            closest_name: "47",
+                            closest_direction: "47",
+                            closest_minutes: "47",
+                            closest_lat: 47.6,
+                            closest_lon: -122.2,
+                        },        
+                        next_closest_stop: {
+                            next_closest_name: "47",
+                            next_closest_direction:
+                                "47",
+                            next_closest_minutes: "47",
+                            next_closest_lat: 47.61,
+                            next_closest_lon: -122.21,
+                        },
+                        route: "47",
+                    }
+                )}
+            >
+                <Image
+                    style={styles.voiceSubmitButton}
+                    source={require("./button.png")}
+                />
+            </Ripple>
         )
     }
 }
 const styles = StyleSheet.create({
-    submitButton: {
-        alignItems: "center",
-        padding: 10,
-        width: width / 1.5,
-        height: width / 1.5
-    },
-    center: {
-        height: "35%",
-        alignItems: "center",
-        justifyContent: "center"
+    voiceSubmitButton: {
+        width: width / 1.3,
+        height: width / 1.3,
+        alignSelf: "center",
+        margin: "10%"
     },
 })

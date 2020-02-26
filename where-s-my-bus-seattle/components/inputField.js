@@ -1,6 +1,7 @@
 import { render } from "react-dom";
 import React from "react";
 import {
+    View,
     Image,
     TextInput,
     TouchableHighlight,
@@ -57,33 +58,33 @@ export default function InputField(props) {
 
     return (
         <>
-        <TextInput
-            style={styles.input}
-            onChangeText={text => updateBusRoute(text)}
-            value={busRoute}
-        />
-        <TouchableHighlight onPress={() => submitHandler()}>
-            <Image
-                // style={styles.submitButton2}
-                source={require("./button_search.png")}
-            />
-        </TouchableHighlight>
+            <View style={styles.inputFieldContainer}>
+                <TextInput
+                    style={styles.inputField}
+                    onChangeText={text => updateBusRoute(text)}
+                    value={busRoute}
+                />
+                <TouchableHighlight onPress={() => submitHandler()}>
+                    <Image
+                        source={require("./button_search.png")}
+                    />
+                </TouchableHighlight>
+            </View>
         </>
     )
 }
 const styles = StyleSheet.create({
-    input: {
+    inputFieldContainer: {
+        alignItems: "center",
+        marginTop: "8%"
+    },
+    inputField: {
         width: width / 2,
         height: 40,
         borderColor: "#29c7ac",
         borderWidth: 3,
         backgroundColor: "#f7f5f5",
-        textAlign: "center" //aj changed this
-    },
-    submitButton2: {
-        alignItems: "center",
-        margin: 3,
-        width: width / 3,
-        height: width / 10
+        textAlign: "center",
+        marginBottom: "4%"      
     },
 })
