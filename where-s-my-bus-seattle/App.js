@@ -49,21 +49,14 @@ export default class App extends React.Component {
             serverBusRoute: "",
             location: null,
             // TODO Non-hardcode
-            lat: 47.6062,
-            long: -122.3321,
+            // lat: null,
+            // long: null,
             errorMessage: null,
-            busCoords: [],
-    
-            query: null,
-            test: 4,
             displayMap: false,
         };
         this.handleInputField = this.handleInputField.bind(this)
-
-        
+        this._getLocationAsync();   
     }
-
-    
 
     componentDidMount() {
         this._getLocationAsync();

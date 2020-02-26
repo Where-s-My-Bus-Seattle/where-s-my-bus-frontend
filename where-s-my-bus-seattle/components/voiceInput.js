@@ -166,26 +166,6 @@ export default class VoiceInput extends React.Component {
                 rippleCentered="true"
                 onPressIn={() => this.handleOnPressIn()}
                 onPressOut={() => this.handleOnPressOut()}
-                // onPress={() => this.props.doneHandler(
-                //     {
-                //         closest_stop: {
-                //             closest_name: "47",
-                //             closest_direction: "47",
-                //             closest_minutes: "47",
-                //             closest_lat: 47.6,
-                //             closest_lon: -122.2,
-                //         },        
-                //         next_closest_stop: {
-                //             next_closest_name: "47",
-                //             next_closest_direction:
-                //                 "47",
-                //             next_closest_minutes: "47",
-                //             next_closest_lat: 47.61,
-                //             next_closest_lon: -122.21,
-                //         },
-                //         route: "47",
-                //     }
-                // )}
             >
                 <Image
                     style={styles.voiceSubmitButton}
@@ -197,8 +177,8 @@ export default class VoiceInput extends React.Component {
 }
 const styles = StyleSheet.create({
     voiceSubmitButton: {
-        width: width / 1.7,
-        height: width / 1.7,
+        width: width / 1.5,
+        height: width / 1.5,
         alignSelf: "center",
         margin: "8%"
     },
