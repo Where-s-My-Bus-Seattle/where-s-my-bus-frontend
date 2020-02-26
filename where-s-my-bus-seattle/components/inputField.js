@@ -16,7 +16,7 @@ export default function InputField(props) {
     const [busRoute, updateBusRoute] = React.useState("");
 
     async function submitHandler() {
-        let url = `http://138.68.251.254:8000/api/v1/${props.lat}/${props.long}/D`;
+        let url = `http://138.68.251.254:8000/api/v1/${props.lat}/${props.long}/${busRoute}`;
         console.log(url);
 
         const response = await fetch(url);
@@ -24,30 +24,6 @@ export default function InputField(props) {
 
         console.log(data)
         props.doneHandler(data);
-
-        // TODO: this goes to APP.JS
-
-        // updateBusRoute("")
-        // updateBusData({
-        //     closestData: {
-        //         closestName: data.closest_stop.closest_name,
-        //         closestDirection: data.closest_stop.closest_direction,
-        //         closestMinutes: data.closest_stop.closest_minutes,
-        //         closestLat: data.closest_stop.closest_lat,
-        //         closestLon: data.closest_stop.closest_lon
-        //     },
-
-        //     nextClosestData: {
-        //         nextClosestName: data.next_closest_stop.next_closest_name,
-        //         nextClosestDirection:
-        //             data.next_closest_stop.next_closest_direction,
-        //         nextClosestMinutes: data.next_closest_stop.next_closest_minutes,
-        //         nextClosestLat: data.next_closest_stop.next_closest_lat,
-        //         nextClosestLon: data.next_closest_stop.next_closest_lon
-        //     },
-        //     serverBusRoute: data.route
-
-        // });
     }
 
     return (

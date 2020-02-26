@@ -85,7 +85,11 @@ export default class App extends React.Component {
     };
     
     handleInputField(data){
-        console.log('inside app.js; the data: ', data)
+        if (data.status === 'bad'){
+            this.setState({errorMessage: data.error})
+            return
+        }
+
         this.setState({
             closestData: {
                 closestName: data.closest_stop.closest_name,
@@ -103,20 +107,28 @@ export default class App extends React.Component {
                 nextClosestLon: data.next_closest_stop.next_closest_lon
             },
             serverBusRoute: data.route,
+            errorMessage: null,
             displayMap: true,
         })
-        console.log('state: ', this.state)
     }
 
     
 
     render() {
-        if (this.state.errorMessage) {
-            location = this.state.errorMessage;
-        } else if (this.state.location) {
-            location = JSON.stringify(this.state.location);
-        }
+        if (this.state.errorMessage){
+            bottomString = (
+                <Text style={styles.errorText}>
+                    {this.state.errorMessage}
+                </Text>
+            )
+        } else {
+            bottomString = (
+                <Text style={styles.opacityText}>
+                    Or type your bus number and tap
+                </Text>
+            ) 
 
+        }
         if (this.state.displayMap) {
             busmap = (
                 <BusMap
@@ -172,11 +184,6 @@ export default class App extends React.Component {
             button = (
                 <VoiceInput doneHandler={this.handleInputField}/>
             );
-            bottomString = (
-                <Text style={styles.opacityText}>
-                    Or type your bus number and tap
-                </Text>
-            )
         }
 
         return (
@@ -224,6 +231,12 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         marginTop: "5%"
     },
+    errorText: {
+        color: "red",
+        fontSize: 30,
+        fontWeight: "bold",
+        alignSelf: "center"
+    }
 });
 
 // TODO: what is this?
