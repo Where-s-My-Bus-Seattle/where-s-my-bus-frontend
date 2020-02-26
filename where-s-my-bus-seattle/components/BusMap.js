@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { Marker, Callout } from "react-native-maps";
-import { StyleSheet, Text, View, Dimensions, TextInput } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 
 export default function BusMap(props) {
     return (
@@ -10,8 +10,10 @@ export default function BusMap(props) {
                     style={styles.mapStyle}
                     customMapStyle={customizedMap}
                     initialRegion={{
-                        latitude: props.lat,
-                        longitude: props.long,
+                        // latitude: props.lat,
+                        // longitude: props.long,
+                        latitude: props.closest.closestLat,
+                        longitude: props.closest.closestLon,
                         latitudeDelta: 0.022,
                         longitudeDelta: 0.00421
                     }}
@@ -59,29 +61,6 @@ const styles = StyleSheet.create({
         height: Dimensions.get("window").height * 0.6,
         borderRadius: 90
     },
-
-    calloutView: {
-        flexDirection: "row",
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        borderRadius: 10,
-        width: "40%",
-        marginLeft: "30%",
-        marginRight: "30%",
-        marginTop: 350
-    },
-    calloutSearch: {
-        borderColor: "transparent",
-        marginLeft: 10,
-        width: "90%",
-        marginRight: 10,
-        height: 40,
-        borderWidth: 0.0
-    },
-    bottom: {
-        height: "60%",
-        alignItems: "center",
-        justifyContent: "center"
-    }
 });
 
 const customizedMap = [

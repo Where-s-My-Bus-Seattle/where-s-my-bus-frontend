@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
-import { View, StyleSheet, Dimensions, Image } from "react-native";
+import { View, StyleSheet, Dimensions, Image, FileSystem } from "react-native";
 import * as Speech from 'expo-speech';
+import * as Permissions from "expo-permissions";
 import { Audio } from 'expo-av';
 import Ripple from "react-native-material-ripple";
 
@@ -30,6 +31,9 @@ const recordingOptions = {
 export default class VoiceInput extends React.Component {
     constructor(props) {
         super(props);
+        this.lat = props.lat
+        this.long = props.long
+        this.doneHandler = props.doneHandler
     }
 
     state = {
@@ -39,69 +43,68 @@ export default class VoiceInput extends React.Component {
     };
 
     getTranscription = async () => {
-        // this.setState({ isFetching: true })
-        toggleIsFetching(true)
+        this.setState({ isFetching: true })
+        // toggleIsFetching(true)
         try {
-            const uri = props.recording.getURI();
-            console.log('here is the uri: ', uri);
+            const uri = this.state._recording.getURI();
             let wav = new FormData();
             wav.append('file', {
                 uri: uri,
                 name: `test.wav`,
                 type: `audio/wav`,
               });
-            console.log('WAV', wav);
-            const response = await fetch(`http://138.68.251.254:8000/api/v1/${props.lat}/${props.long}`, {
+            console.log('=WAV being sent=');
+            console.log(wav._parts[0][1]);
+            const response = await fetch(`http://138.68.251.254:8000/api/v1/${this.lat}/${this.long}`, {
                 method: 'POST',
                 body: wav,
-
             })
             const json = await response.json();
-            updateBusData({
-                closestData: {
-                    closestName: json.closest_stop.closest_name,
-                    closestDirection: json.closest_stop.closest_direction,
-                    closestMinutes: json.closest_stop.closest_minutes,
-                    closestLat: json.closest_stop.closest_lat,
-                    closestLon: json.closest_stop.closest_lon
+            console.log('=response from the server:');
+            console.log(json);
+
+            const busData = {
+                closest_stop: {
+                    closest_name: json.closest_stop.closest_name,
+                    closest_direction: json.closest_stop.closest_direction,
+                    closest_minutes: json.closest_stop.closest_minutes,
+                    closest_lat: json.closest_stop.closest_lat,
+                    closest_lon: json.closest_stop.closest_lon
                 },
-                nextClosestData: {
-                    nextClosestName: json.next_closest_stop.next_closest_name,
-                    nextClosestDirection:json.next_closest_stop.next_closest_direction,
-                    nextClosestMinutes: json.next_closest_stop.next_closest_minutes,
-                    nextClosestLat: json.next_closest_stop.next_closest_lat,
-                    nextClosestLon: json.next_closest_stop.next_closest_lon
+                next_closest_stop: {
+                    next_closest_name: json.next_closest_stop.next_closest_name,
+                    next_closest_direction:json.next_closest_stop.next_closest_direction,
+                    next_closest_minutes: json.next_closest_stop.next_closest_minutes,
+                    next_closest_lat: json.next_closest_stop.next_closest_lat,
+                    next_closest_lon: json.next_closest_stop.next_closest_lon
                 },
                 serverBusRoute: json.route
+            }
+            this.doneHandler(busData)
 
-            });
-
-            setMapDisplay(true);
-            console.log('closest data: ', busData.closestData)
-            console.log('nextClosest data: ', busData.nextClosestData)
-            console.log('bus data number', busData.closestData.closestMinutes)
-            speak(busData.closestData.closestMinutes)
+            this.speak(busData.closest_stop.closest_minutes)
         } catch (error) {
             console.log('There was an error', error);
-            props.stopRecording();
-            props.resetRecording();
+            this.stopRecording();
+            this.resetRecording();
         }
-        toggleIsFetching(false)
-        // this.setState({ isFetching: false })
+        // toggleIsFetching(false)
+        this.setState({ isFetching: false })
     }
 
-    // handleOnPressIn = async () => {
-    // //     console.log('pressed in')
-    // //     await this.startRecording();
-    // // }
+    handleOnPressIn = async () => {
+        console.log('=pressed in=')
+        await this.startRecording();
+    }
 
-    // // handleOnPressOut = async () => {
-    // //     console.log('pressed out')
-    // //     await this.stopRecording();
-    // //     await this.getTranscription();
-    // // }
+    handleOnPressOut = async () => {
+        console.log('=pressed out=')
+        await this.stopRecording();
+        await this.getTranscription();
+    }
 
     startRecording = async () => {
+        console.log('=starting recording=')
         const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
         if (status !== 'granted') return;
         this.setState({ isRecording: true, _recording: new Audio.Recording() })
@@ -124,11 +127,11 @@ export default class VoiceInput extends React.Component {
             console.log(error);
             this.stopRecording();
         }
-        console.log('should be an object: ', this.state._recording)
+        console.log('should be a recording uri: ', this.state._recording._uri)
     }
 
     stopRecording = async () => {
-        console.log('in the func')
+        console.log('=stopping recording=')
         this.setState({ isRecording: false })
         await this.state._recording.stopAndUnloadAsync();
 
@@ -144,8 +147,8 @@ export default class VoiceInput extends React.Component {
         }
     }
 
-    resetRecording() {
-        this.deleteRecordingFile();
+    resetRecording = async () => {
+        await this.deleteRecordingFile();
         this.state._recording = null;
     }
 
@@ -156,57 +159,27 @@ export default class VoiceInput extends React.Component {
     }
 
     render() {
-        return (
-            <View style={styles.center}>  
-                <Ripple
-                    rippleColor="rgb(52, 61, 235)"
-                    rippleDuration="2400"
-                    // rippleContainerBorderRadius="100" //aj commented this out
-                    rippleCentered="true"
-                    style={styles.submitButton}
-                    onPress={() => this.props.doneHandler(
-                        {
-                            closestData: {
-                                closestName: "47",
-                                closestDirection: "47",
-                                closestMinutes: "47",
-                                closestLat: "47",
-                                closestLon: "47",
-                            },        
-                            nextClosestData: {
-                                nextClosestName: "47",
-                                nextClosestDirection:
-                                    "47",
-                                nextClosestMinutes: "47",
-                                nextClosestLat: "47",
-                                nextClosestLon: "47",
-                            },
-                            serverBusRoute: "47",
-                            displayMap: true,
-                        }
-                    )}
-                    // onPressIn={() => props.handleOnPressIn()}
-                    // onPressOut={() => newHandlePressOut()}
-                >
-                    <Image
-                        style={styles.submitButton}
-                        source={require("./button.png")}
-                    />
-                </Ripple>
-            </View>
+        return ( 
+            <Ripple
+                rippleColor="rgb(52, 61, 235)"
+                rippleDuration="2400"
+                rippleCentered="true"
+                onPressIn={() => this.handleOnPressIn()}
+                onPressOut={() => this.handleOnPressOut()}
+            >
+                <Image
+                    style={styles.voiceSubmitButton}
+                    source={require("./button.png")}
+                />
+            </Ripple>
         )
     }
 }
 const styles = StyleSheet.create({
-    submitButton: {
-        alignItems: "center",
-        padding: 10,
+    voiceSubmitButton: {
         width: width / 1.5,
-        height: width / 1.5
-    },
-    center: {
-        height: "35%",
-        alignItems: "center",
-        justifyContent: "center"
+        height: width / 1.5,
+        alignSelf: "center",
+        margin: "8%"
     },
 })

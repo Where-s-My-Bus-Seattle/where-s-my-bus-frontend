@@ -3,18 +3,17 @@ import { View, StyleSheet, TouchableOpacity, Image, Text, KeyboardAvoidingView, 
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
-// import BusForm from "./components/BusForm";
+
 import InputField from "./components/inputField";
 import BusMap from "./components/BusMap";
 import Results from "./components/Results";
 import VoiceInput from "./components/voiceInput";
 import TextCarousel from "react-native-text-carousel";
-// import { Audio } from 'expo-av';
+
 
 // https://fostermade.co/blog/making-speech-to-text-work-with-react-native-and-expo
 // Guide used to help with recording
 
-// const [mapDisplay, setMapDisplay] = React.useState(false);
 
 let homeButton;
 let button;
@@ -49,21 +48,15 @@ export default class App extends React.Component {
             },
             serverBusRoute: "",
             location: null,
-            lat: 47.6062,
-            long: -122.3321,
+            // TODO Non-hardcode
+            // lat: null,
+            // long: null,
             errorMessage: null,
-            busCoords: [],
-    
-            query: null,
-            test: 4,
             displayMap: false,
         };
         this.handleInputField = this.handleInputField.bind(this)
-
-        
+        this._getLocationAsync();   
     }
-
-    
 
     componentDidMount() {
         this._getLocationAsync();
@@ -85,7 +78,11 @@ export default class App extends React.Component {
     };
     
     handleInputField(data){
-        console.log('inside app.js; the data: ', data)
+        if (data.status === 'bad'){
+            this.setState({errorMessage: data.error})
+            return
+        }
+
         this.setState({
             closestData: {
                 closestName: data.closest_stop.closest_name,
@@ -103,231 +100,139 @@ export default class App extends React.Component {
                 nextClosestLon: data.next_closest_stop.next_closest_lon
             },
             serverBusRoute: data.route,
+            errorMessage: null,
             displayMap: true,
         })
-        console.log('state: ', this.state)
     }
 
     
 
     render() {
-        if (this.state.errorMessage) {
-            location = this.state.errorMessage;
-        } else if (this.state.location) {
-            location = JSON.stringify(this.state.location);
-        }
+        if (this.state.errorMessage){
+            bottomString = (
+                <Text style={styles.errorText}>
+                    {this.state.errorMessage}
+                </Text>
+            )
+        } else {
+            bottomString = (
+                <Text style={styles.opacityText}>
+                    Or type your bus number and tap
+                </Text>
+            ) 
 
+        }
         if (this.state.displayMap) {
             busmap = (
-                <View style={styles.center2}>
-                    <BusMap
-                        lat={this.state.lat}
-                        long={this.state.long}
-                        closest={this.state.closestData}
-                        nextClosest={this.state.nextClosestData}
-                    />
-                </View>
-            );
-            textInput = (<></>)
-            homeButton = (
-                <View style={styles.bottom2}>
-                    <TouchableOpacity onPress={() => this.setState({displayMap: false})}>
-                        <Image source={require("./components/button_another.png")} />
-                    </TouchableOpacity>
-                </View>
-            );
-            results = (
-                <Results
-                    busNumber={this.state.serverBusRoute}
+                <BusMap
+                    // lat={this.state.lat}
+                    // long={this.state.long}
                     closest={this.state.closestData}
                     nextClosest={this.state.nextClosestData}
                 />
             );
+            homeButton = (
+                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false})}>
+                    <Image source={require("./components/button_another.png")} />
+                </TouchableOpacity>
+            );
+            results = (
+                <Results
+                busNumber={this.state.serverBusRoute}
+                closest={this.state.closestData}
+                nextClosest={this.state.nextClosestData}
+                />
+            );
+            textInput = (<></>)
             button = (<></>)
             bottomString = (<></>)
             textCarousel = (<></>)
             heading = (<></>)
         } else {
             textInput = (
-                <InputField doneHandler={this.handleInputField}/>
+                <InputField doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
             );
             homeButton = (<></>)
             busmap = (<></>)
             results = (<></>)
             textCarousel = (
-                <TextCarousel>
-                    <TextCarousel.Item>
-                        <View style={styles.carouselContainer}>
+                <View style={styles.textCarousel}>
+                    <TextCarousel>
+                        <TextCarousel.Item>
                             <Text style={styles.opacityText}>
                                 Tap to speak
                             </Text>
-                        </View>
-                    </TextCarousel.Item>
-                    <TextCarousel.Item>
-                        <View style={styles.carouselContainer}>
+                        </TextCarousel.Item>
+                        <TextCarousel.Item>
                             <Text style={styles.opacityText}>
                                 When does "8" get here?
                             </Text>
-                        </View>
-                    </TextCarousel.Item>
-                </TextCarousel>
+                        </TextCarousel.Item>
+                    </TextCarousel>
+                </View>
             );
             heading = (
-                <View style={styles.top}>
-                    <View>
-                        <Text style={styles.header}>Where's My Bus?</Text>
-                    </View>
-                </View>
+                <Text style={styles.appTitleHeader}>Where's My Bus?</Text>
             )
             button = (
-                <VoiceInput doneHandler={this.handleInputField}/>
+                <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
             );
-            bottomString = (
-                <Text style={styles.opacityText2}>
-                    Or type your bus number and tap
-                </Text>
-            )
-                        
-    
-            //             <View style={styles.bottom}>
-            //                 
-            //                 <TextInput
-            //                     style={styles.input}
-            //                     onChangeText={text => updateBusRoute(text)}
-            //                     value={busRoute}
-            //                 />
-            //                 <TouchableHighlight onPress={() => submitHandler()}>
-            //                     <Image
-            //                         style={styles.submitButton2}
-            //                         source={require("./button_search.png")}
-            //                     />
-            //                 </TouchableHighlight>
-            //             </View>
-            //         </KeyboardAvoidingView>
-            //     </Fragment>
-            // );
         }
 
-        //             results = (
-        //                 <Results
-        //                     busNumber={busData.serverBusRoute}
-        //                     closest={busData.closestData}
-        //                     nextClosest={busData.nextClosestData}
-        //                 />
-        //             );
-                    // busmap = (
-                    //     <View style={styles.center2}>
-                    //         <BusMap
-                    //             lat={props.lat}
-                    //             long={props.long}
-                    //             closest={busData.closestData}
-                    //             nextClosest={busData.nextClosestData}
-                    //         />
-                    //     </View>
-                    // );
-        //         }
-        //             {
-        //             }
-        //             button = <></>;
-        //             homeButton = (
-        //                 <View style={styles.bottom2}>
-        //                     <TouchableOpacity onPress={() => returnHome()}>
-        //                         <Image source={require("./button_another.png")} />
-        //                     </TouchableOpacity>
-        //                 </View>
-        //             );
-        //         } else {
-        //             busmap = <></>;
-        //             button = 
-        //         }
-
-        // return (
-        //     <View style={styles.container}>
-        //         {button}
-        //         {results}
-        //         {busmap}
-        //         {homeButton}
-        //     </View>
-        // );
         return (
-            <Fragment>
-                    <KeyboardAvoidingView style={styles.container} behavior="position">
-                        <View>
-                            {heading}
-                            {textCarousel}
-                            {button}
-                            {bottomString}
-                            {textInput}
-                            {results}
-                            {busmap}
-                            {homeButton}
-                        </View>
-                    </KeyboardAvoidingView>
-            </Fragment>
-            
+            <KeyboardAvoidingView style={styles.mainViewContainer} behavior="position">
+                {heading}
+                {textCarousel}
+                {button}
+                {bottomString}
+                {textInput}
+                {results}
+                {busmap}
+                {homeButton}
+            </KeyboardAvoidingView>  
         );
     }
 }
-const { width } = Dimensions.get("screen");
 
 const styles = StyleSheet.create({
-    container: {
+    mainViewContainer: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
         paddingTop: Constants.statusBarHeight,
-        backgroundColor: "#54123B"
+        backgroundColor: "#54123B",
     },
-    paragraph: {
-        margin: 24,
-        fontSize: 18,
-        textAlign: "center"
-    },
-    center2: {
-        height: "50%",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    bottom2: {
-        height: "25%",
-        alignItems: "center",
-        justifyContent: "center"
+    textCarousel: {
+        height:8,
+        marginTop: "10%",
     },
     opacityText: {
         opacity: 0.2,
         color: "white",
         fontWeight: "bold",
-        fontSize: 20
+        fontSize: 20,
+        alignSelf: "center"
     },
-    carouselContainer: {
-        margin: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingBottom: 0
-    },
-    top: {
+    homeButton: {
         height: "25%",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
     },
-    header: {
+    appTitleHeader: {
         color: "#f7f5f5",
         fontWeight: "bold",
-        fontSize: 47
+        fontSize: 47,
+        alignSelf: "center",
+        marginTop: "5%"
     },
-    center: {
-        height: "35%",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    submitButton: {
-        alignItems: "center",
-        padding: 10,
-        width: width / 1.5,
-        height: width / 1.5
-    },
+    errorText: {
+        color: "red",
+        fontSize: 30,
+        fontWeight: "bold",
+        alignSelf: "center"
+    }
 });
 
-console.disableYellowBox = true;
+// TODO: what is this?
+// console.disableYellowBox = true;
 
 
