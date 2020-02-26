@@ -48,9 +48,8 @@ export default class App extends React.Component {
             },
             serverBusRoute: "",
             location: null,
-            // TODO Non-hardcode
-            // lat: null,
-            // long: null,
+            lat: 47.5899628,
+            long: -122.2691655,
             errorMessage: null,
             displayMap: false,
         };
