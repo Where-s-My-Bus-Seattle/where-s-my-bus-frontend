@@ -24,6 +24,7 @@ export default function InputField(props) {
 
         console.log(data)
         props.doneHandler(data);
+        props.hideHandler();
     }
 
     return (
