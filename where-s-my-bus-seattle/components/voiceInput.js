@@ -6,6 +6,7 @@ import { Audio } from 'expo-av';
 import Ripple from "react-native-material-ripple";
 
 const { width } = Dimensions.get("screen");
+let image;
 
 const recordingOptions = {
     android: {
@@ -28,25 +29,21 @@ const recordingOptions = {
     },
 };
 
-export default class VoiceInput extends React.Component {
-    constructor(props) {
-        super(props);
-        this.lat = props.lat
-        this.long = props.long
-        this.doneHandler = props.doneHandler
-    }
+export default function VoiceInput(props){
+    let lat = props.lat
+    let long = props.long
+    let doneHandler = props.doneHandler
+    let hideHandler = props.hideHandler
+    let _recording = null
+    let isRecording = false
+    let displayButton = props.displayButton
 
-    state = {
-        isRecording: false,
-        isFetching: false,
-        _recording: null,
-    };
+    let [isFetching, toggleIsFetching] = React.useState(false);
 
-    getTranscription = async () => {
-        this.setState({ isFetching: true })
-        // toggleIsFetching(true)
+    async function getTranscription(){
+        toggleIsFetching(true)
         try {
-            const uri = this.state._recording.getURI();
+            const uri = _recording.getURI();
             let wav = new FormData();
             wav.append('file', {
                 uri: uri,
@@ -55,11 +52,13 @@ export default class VoiceInput extends React.Component {
               });
             console.log('=WAV being sent=');
             console.log(wav._parts[0][1]);
-            console.log('lat/lon: ', this.lat, this.long)
-            const response = await fetch(`http://138.68.251.254:8000/api/v1/${this.lat}/${this.long}`, {
+            console.log('lat/lon: ', lat, long)
+
+            const response = await fetch(`http://138.68.251.254:8000/api/v1/${lat}/${long}`, {
                 method: 'POST',
                 body: wav,
             })
+
             const json = await response.json();
             console.log('=response from the server:');
             console.log(json);
@@ -81,34 +80,39 @@ export default class VoiceInput extends React.Component {
                 },
                 route: json.route
             }
-            this.doneHandler(busData)
 
-            this.speak(busData.closest_stop.closest_minutes)
+            doneHandler(busData)
+
+            speak(busData.closest_stop.closest_minutes)
+
         } catch (error) {
-            console.log('There was an error', error);
-            this.stopRecording();
-            this.resetRecording();
+                console.log('There was an error', error);
+                stopRecording();
+                resetRecording();
         }
-        // toggleIsFetching(false)
-        this.setState({ isFetching: false })
+        toggleIsFetching(false)
+        resetRecording();
     }
 
-    handleOnPressIn = async () => {
+    async function handleOnPressIn() {
         console.log('=pressed in=')
-        await this.startRecording();
+        await startRecording();
     }
 
-    handleOnPressOut = async () => {
+    async function handleOnPressOut(){
         console.log('=pressed out=')
-        await this.stopRecording();
-        await this.getTranscription();
+        await stopRecording();
+        await getTranscription();
+        hideHandler()
     }
 
-    startRecording = async () => {
+    async function startRecording(){
         console.log('=starting recording=')
         const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-        if (status !== 'granted') return;
-        this.setState({ isRecording: true, _recording: new Audio.Recording() })
+        if (status !== 'granted'){return;}
+
+        isRecording = true
+        _recording = new Audio.Recording();
 
         // some of these are not applicable, but are required
         await Audio.setAudioModeAsync({
@@ -122,65 +126,85 @@ export default class VoiceInput extends React.Component {
         });
 
         try {
-            await this.state._recording.prepareToRecordAsync(recordingOptions);
-            await this.state._recording.startAsync();
+            await _recording.prepareToRecordAsync(recordingOptions);
+            await _recording.startAsync();
         } catch (error) {
             console.log(error);
-            this.stopRecording();
+            stopRecording();
         }
-        console.log('should be a recording uri: ', this.state._recording._uri)
+        console.log('should be a recording uri: ', _recording._uri)
     }
 
-    stopRecording = async () => {
+    async function stopRecording(){
         console.log('=stopping recording=')
-        this.setState({ isRecording: false })
-        await this.state._recording.stopAndUnloadAsync();
-
+        isRecording = false
+        await _recording.stopAndUnloadAsync();
     }
 
-    deleteRecordingFile = async () => {
-        console.log("Deleting file");
+    async function deleteRecordingFile(){
+        console.log("=Deleting file=");
+        console.log('recording ', _recording)
         try {
-            const info = await FileSystem.getInfoAsync(this.state._recording.getURI());
+            const info = await FileSystem.getInfoAsync(_recording.getURI());
             await FileSystem.deleteAsync(info.uri)
         } catch (error) {
             console.log("There was an error deleting recording file", error);
         }
     }
 
-    resetRecording = async () => {
-        await this.deleteRecordingFile();
-        this.state._recording = null;
+    async function resetRecording(){
+        await deleteRecordingFile();
+        _recording = null;
     }
 
-    speak(minutes) {
+    speak = (minutes) => {
         var thingToSay = `Bus 8 will be here in ${minutes} minutes.`;
         Speech.speak(thingToSay);
         console.log('speaking...=========')
     }
 
-    render() {
-        return ( 
-            <Ripple
-                rippleColor="rgb(52, 61, 235)"
-                rippleDuration="2400"
-                rippleCentered="true"
-                onPressIn={() => this.handleOnPressIn()}
-                onPressOut={() => this.handleOnPressOut()}
-            >
-                <Image
-                    style={styles.voiceSubmitButton}
-                    source={require("./button.png")}
-                />
-            </Ripple>
+    const num = 2400
+    const bool = true
+
+    if (displayButton){
+        image = (
+            <Image
+            style={styles.showButton}
+            source={require("./button.png")}
+            />
+        )
+    } else {
+        image = (
+            <Image
+            style={styles.hideButton}
+            source={require("./button.png")}
+            />
         )
     }
+
+    return (
+        <Ripple
+            rippleColor="rgb(52, 61, 235)"
+            rippleDuration={num}
+            rippleCentered={bool}
+            onPressIn={() => handleOnPressIn()}
+            onPressOut={() => handleOnPressOut()}
+        >
+            {image}
+        </Ripple>
+    )
 }
-const styles = StyleSheet.create({
-    voiceSubmitButton: {
+
+let styles = StyleSheet.create({
+    showButton: {
         width: width / 1.5,
         height: width / 1.5,
         alignSelf: "center",
         margin: "8%"
     },
+    hideButton: {
+        width: 0,
+        height: 0,
+        alignSelf: "center",
+    }
 })

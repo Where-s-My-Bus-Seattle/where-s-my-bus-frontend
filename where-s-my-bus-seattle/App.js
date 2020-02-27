@@ -53,8 +53,11 @@ export default class App extends React.Component {
             // long: -122.2691655,
             errorMessage: null,
             displayMap: false,
+            displayButton: true,
         };
         this.handleInputField = this.handleInputField.bind(this)
+        this.hideButtonDisplay = this.hideButtonDisplay.bind(this)
+        // this.showButtonDisplay = this.showButtonDisplay.bind(this)
     }
 
     componentDidMount() {
@@ -105,6 +108,12 @@ export default class App extends React.Component {
         })
     }
 
+    hideButtonDisplay(){
+        this.setState({ displayButton: false })
+    }
+    // showButtonDisplay(){
+    //     this.setState({ displayMap: true })
+    // }
     render() {
         if (this.state.errorMessage){
             bottomString = (
@@ -121,8 +130,9 @@ export default class App extends React.Component {
         }
         if (this.state.lat && this.state.long){
             button = (
-                <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+                <VoiceInput doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} displayButton={this.state.displayButton} lat={this.state.lat} long={this.state.long}/>
             );
+            console.log('this.state.displayButton: ', this.state.displayButton)
         } else {
             button = (<></>);
         }
@@ -136,7 +146,7 @@ export default class App extends React.Component {
                 />
             );
             homeButton = (
-                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false})}>
+                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false, displayButton: true})}>
                     <Image source={require("./components/button_another.png")} />
                 </TouchableOpacity>
             );
@@ -148,13 +158,13 @@ export default class App extends React.Component {
                 />
             );
             textInput = (<></>)
-            button = (<></>)
+            // button = (<></>)
             bottomString = (<></>)
             textCarousel = (<></>)
             heading = (<></>)
         } else {
             textInput = (
-                <InputField doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+                <InputField doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} lat={this.state.lat} long={this.state.long}/>
             );
             homeButton = (<></>)
             busmap = (<></>)
@@ -233,7 +243,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: "bold",
         alignSelf: "center"
-    }
+    },
 });
 
 // TODO: what is this?
