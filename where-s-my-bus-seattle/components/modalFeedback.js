@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet} from 'react-native';
-
+import Toggle from "./toggle"
 export default class ModalFeedback extends Component {
   state = {
     modalVisible: false,
@@ -22,7 +22,14 @@ export default class ModalFeedback extends Component {
           }}>
           <View style={{marginTop: 22}}>
             <View>
-              <Text>Hello World!</Text>
+
+              <Toggle question = "Is this app free?">
+                <Text >Yes, our app is free</Text>
+              </Toggle> 
+
+              <Toggle question = "Where can I use this app?">
+                <Text >Currently our app covers the King County area</Text>
+              </Toggle> 
 
               <TouchableHighlight
                 onPress={() => {
