@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
-import { View, StyleSheet, Dimensions, Image, FileSystem } from "react-native";
+import { View, StyleSheet, Dimensions, Image } from "react-native";
+import * as FileSystem from 'expo-file-system';
 import * as Speech from 'expo-speech';
 import * as Permissions from "expo-permissions";
 import { Audio } from 'expo-av';
@@ -46,15 +47,15 @@ export default function VoiceInput(props){
     async function getTranscription(){
         toggleIsFetching(true)
         try {
-            // const uri = _recording.getURI();
             let wav = new FormData();
             wav.append('file', {
+                // uri: audioItem,
                 uri: localUri,
                 name: `test.wav`,
                 type: `audio/wav`,
               });
             console.log('=WAV being sent=');
-            console.log(wav._parts[0][1]);
+            // console.log(wav._parts[0][1]);
             console.log('lat/lon: ', lat, long)
 
             const response = await fetch(`http://138.68.251.254:8000/api/v1/${lat}/${long}`, {
@@ -85,8 +86,7 @@ export default function VoiceInput(props){
             }
 
             doneHandler(busData)
-            // playRecording(uri);
-            // speak(busData.closest_stop.closest_minutes)
+            speak(busData.closest_stop.closest_minutes)
 
         } catch (error) {
                 console.log('There was an error', error);
@@ -105,7 +105,7 @@ export default function VoiceInput(props){
     async function handleOnPressOut(){
         console.log('=pressed out=')
         await stopRecording();
-        await createAndLoadNewSoundObject();
+        await loadAndPlayRecording();
         await getTranscription();
         hideHandler();
     }
@@ -141,20 +141,6 @@ export default function VoiceInput(props){
         console.log('should be a recording uri: ', _recording._uri)
     }
 
-    // onEndRecording: props => async () => {
-    //     try {
-    //       await props.recording.stopAndUnloadAsync();
-    //       await props.setAudioMode({ allowsRecordingIOS: false });
-    //     } catch (error) {
-    //       console.log(error); // eslint-disable-line
-    //     }
-  
-    //     if (props.recording) {
-    //       const fileUrl = props.recording.getURI();
-    //       props.recording.setOnRecordingStatusUpdate(null);
-    //       props.setState({ recording: null, fileUrl });
-    //     }
-    // },
     async function stopRecording(){
         console.log('=stopping recording=')
         isRecording = false
@@ -169,58 +155,21 @@ export default function VoiceInput(props){
             console.log('localUri: ', localUri);
             durationMillis = _recording.durationMillis
             _recording.setOnRecordingStatusUpdate(null);
-            // _recording = null
         }
     }
-    function makeAudioObject(){
-        audioItem = {
-            id: uuid(),
-            audioUrl: localUri,
-            duration: durationMillis,
-        };
+    async function loadAndPlayRecording(){
+        audioItem = await _recording.createNewLoadedSoundAsync()
+        await audioItem.sound.playAsync()
     }
-    async function createAndLoadNewSoundObject(){
-        let newSoundObject = await _recording.createNewLoadedSoundAsync()
-        // const soundObject = new Audio.Sound();
-
-        // await soundObject.loadAsync(newSoundObject);
-        // await soundObject.playAsync();
-        console.log('new sound obj: ', newSoundObject)
-        await newSoundObject.sound.playAsync()
-        // playRecording(newSoundObject.sound);
-    }
-    // async function playRecording(uri) {
-    //     uri = {"uri": uri}
-    //     console.log('the "uri" that we are "playing": ', uri)
-    //     await Audio.setIsEnabledAsync(true);
-    //     let newSoundObject = await _recording.createNewLoadedSoundAsync()
-    //     // const sound = Audio.Sound.create(uri, }, onPlaybackStatusUpdate = null, downloadFirst = true)
-    //     // const sound = new Audio.Sound();
-    //     // await sound.loadAsync(uri);
-    //     console.log('here??')
-    //     await newSoundObject.playAsync();
-    //     console.log('ere????xxx')
-    // }
-    async function playRecording(uri){
-        onPlaybackStatusUpdate = ({
-            durationMillis,
-            positionMillis,
-            isPlaying,
-            isLooping,
-            didJustFinish,
-        })
-
-        sound = await Audio.Sound.createAsync({ uri: localUri }, { shouldPlay: true }, onPlaybackStatusUpdate)
-
-    }
-
 
     async function deleteRecordingFile(){
         console.log("=Deleting file=");
-        console.log('recording ', audioItem)
         try {
             const info = await FileSystem.getInfoAsync(_recording.getURI());
+            console.log('=Find Local File= ', info)
             await FileSystem.deleteAsync(info.uri)
+            const temp = await FileSystem.getInfoAsync(_recording.getURI());
+            console.log('=File is now deleted= ', temp)
         } catch (error) {
             console.log("There was an error deleting recording file", error);
         }
