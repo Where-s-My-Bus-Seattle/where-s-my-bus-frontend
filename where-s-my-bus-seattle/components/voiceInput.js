@@ -51,26 +51,10 @@ export default function VoiceInput(props){
             console.log('=response from the server:');
             console.log(json);
 
-            const busData = {
-                closest_stop: {
-                    closest_name: json.closest_stop.closest_name,
-                    closest_direction: json.closest_stop.closest_direction,
-                    closest_minutes: json.closest_stop.closest_minutes,
-                    closest_lat: json.closest_stop.closest_lat,
-                    closest_lon: json.closest_stop.closest_lon
-                },
-                next_closest_stop: {
-                    next_closest_name: json.next_closest_stop.next_closest_name,
-                    next_closest_direction:json.next_closest_stop.next_closest_direction,
-                    next_closest_minutes: json.next_closest_stop.next_closest_minutes,
-                    next_closest_lat: json.next_closest_stop.next_closest_lat,
-                    next_closest_lon: json.next_closest_stop.next_closest_lon
-                },
-                route: json.route
-            }
-
-            doneHandler(busData)
+            hideButtonHandler();
+            doneHandler(json)
             speak(busData.closest_stop.closest_minutes)
+
 
         } catch (error) {
                 console.log('There was an error', error);
@@ -92,7 +76,6 @@ export default function VoiceInput(props){
         await stopRecording();
         await loadAndPlayRecording();
         await getTranscriptionFromServer();
-        hideButtonHandler();
     }
 
 //////////////////////////////////////////////////////////////////////////////////////
