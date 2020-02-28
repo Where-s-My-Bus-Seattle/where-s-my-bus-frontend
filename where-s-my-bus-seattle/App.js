@@ -9,6 +9,7 @@ import BusMap from "./components/BusMap";
 import Results from "./components/Results";
 import VoiceInput from "./components/voiceInput";
 import TextCarousel from "react-native-text-carousel";
+import ModalFeedback from "./components/modalFeedback";
 
 
 // https://fostermade.co/blog/making-speech-to-text-work-with-react-native-and-expo
@@ -167,7 +168,7 @@ export default class App extends React.Component {
             bottomString = (<></>)
             textCarousel = (<></>)
             heading = (<></>)
-
+            modalFeedback = (<></>)
         } else {
             textInput = (
                 <InputField doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} lat={this.state.lat} long={this.state.long}/>
@@ -185,7 +186,7 @@ export default class App extends React.Component {
                         </TextCarousel.Item>
                         <TextCarousel.Item>
                             <Text style={styles.opacityText}>
-                                When does "8" get here?
+                                When does 'C-Line' get here?
                             </Text>
                         </TextCarousel.Item>
                     </TextCarousel>
@@ -194,6 +195,10 @@ export default class App extends React.Component {
             heading = (
                 <Text style={styles.appTitleHeader}>Where's My Bus?</Text>
             )
+            modalFeedback=(<ModalFeedback />)
+            // button = (
+            //     <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+            // );
         }
 
         // Return the view
@@ -202,11 +207,14 @@ export default class App extends React.Component {
                 {heading}
                 {textCarousel}
                 {button}
+                {modalFeedback}
                 {bottomString}
                 {textInput}
                 {results}
                 {busmap}
                 {homeButton}
+                
+                
             </KeyboardAvoidingView>  
         );
     }
@@ -222,6 +230,7 @@ let results;
 let textInput;
 let heading;
 let bottomString;
+let modalFeedback;
 
 const styles = StyleSheet.create({
     mainViewContainer: {

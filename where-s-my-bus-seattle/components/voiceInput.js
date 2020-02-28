@@ -33,8 +33,8 @@ export default function VoiceInput(props){
         try {
             let wav = new FormData();
             wav.append('file', {
-                uri: audioItem.sound,
-                // uri: localUri,
+                // uri: audioItem.sound,
+                uri: localUri,
                 name: `test.wav`,
                 type: `audio/wav`,
               });
