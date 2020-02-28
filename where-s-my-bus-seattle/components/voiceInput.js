@@ -6,51 +6,35 @@ import * as Permissions from "expo-permissions";
 import { Audio } from 'expo-av';
 import Ripple from "react-native-material-ripple";
 
-const { width } = Dimensions.get("screen");
-let image;
-
-const recordingOptions = {
-    android: {
-        extension: '.wav',
-        outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-        audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-        sampleRate: 44100,
-        numberOfChannels: 2,
-        bitRate: 128000,
-    },
-    ios: {
-        extension: '.wav',
-        audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-        sampleRate: 44100,
-        numberOfChannels: 1,
-        bitRate: 128000,
-        linearPCMBitDepth: 16,
-        linearPCMIsBigEndian: false,
-        linearPCMIsFloat: false,
-    },
-};
 
 export default function VoiceInput(props){
     let lat = props.lat
     let long = props.long
     let doneHandler = props.doneHandler
-    let hideHandler = props.hideHandler
+    let hideButtonHandler = props.hideHandler
+    let displayButton = props.displayButton
+
     let _recording = null
     let localUri = null
     let audioItem = {}
     let durationMillis = 0
     let isRecording = false
-    let displayButton = props.displayButton
 
     let [isFetching, toggleIsFetching] = React.useState(false);
 
-    async function getTranscription(){
+    let recordingOptions = require('./recordingOptions').recordingOptions
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Fetch Route Data //////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+    async function getTranscriptionFromServer(){
         toggleIsFetching(true)
+
         try {
             let wav = new FormData();
             wav.append('file', {
-                // uri: audioItem,
-                uri: localUri,
+                uri: audioItem.sound,
+                // uri: localUri,
                 name: `test.wav`,
                 type: `audio/wav`,
               });
@@ -67,36 +51,21 @@ export default function VoiceInput(props){
             console.log('=response from the server:');
             console.log(json);
 
-            const busData = {
-                closest_stop: {
-                    closest_name: json.closest_stop.closest_name,
-                    closest_direction: json.closest_stop.closest_direction,
-                    closest_minutes: json.closest_stop.closest_minutes,
-                    closest_lat: json.closest_stop.closest_lat,
-                    closest_lon: json.closest_stop.closest_lon
-                },
-                next_closest_stop: {
-                    next_closest_name: json.next_closest_stop.next_closest_name,
-                    next_closest_direction:json.next_closest_stop.next_closest_direction,
-                    next_closest_minutes: json.next_closest_stop.next_closest_minutes,
-                    next_closest_lat: json.next_closest_stop.next_closest_lat,
-                    next_closest_lon: json.next_closest_stop.next_closest_lon
-                },
-                route: json.route
-            }
+            hideButtonHandler();
+            doneHandler(json)
+            speak(json.closest_stop.closest_minutes)
 
-            doneHandler(busData)
-            speak(busData.closest_stop.closest_minutes)
 
         } catch (error) {
                 console.log('There was an error', error);
-                stopRecording();
-                resetRecording();
         }
         toggleIsFetching(false)
         resetRecording();
     }
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Press In / Out ////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     async function handleOnPressIn() {
         console.log('=pressed in=')
         await startRecording();
@@ -106,22 +75,20 @@ export default function VoiceInput(props){
         console.log('=pressed out=')
         await stopRecording();
         await loadAndPlayRecording();
-        await getTranscription();
-        hideHandler();
+        await getTranscriptionFromServer();
     }
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Start Recording ///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     async function startRecording(){
         console.log('=starting recording=')
         const permission = Audio.getPermissionsAsync();
-        if (permission){
-            // const status = Audio.requestPermissionsAsync();
-            // const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-            // if (status !== 'granted'){return;}
-            // await Audio.setAudioModeAsync({ allowsRecordingIOS: true })
+
+        if (permission) {
             isRecording = true
             _recording = new Audio.Recording();
 
-            // some of these are not applicable, but are required
             await Audio.setAudioModeAsync({
                 allowsRecordingIOS: true,
                 interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -130,17 +97,24 @@ export default function VoiceInput(props){
                 interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
                 playThroughEarpieceAndroid: true,
             });
-        } else{Audio.requestPermissionsAsync();}
+
+        } else {
+            Audio.requestPermissionsAsync();
+        }
+
         try {
             await _recording.prepareToRecordAsync(recordingOptions);
             await _recording.startAsync();
         } catch (error) {
-            console.log(error);
+            console.log('Error starting recording: ', error);
             stopRecording();
         }
         console.log('should be a recording uri: ', _recording._uri)
     }
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Stop Recording ////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     async function stopRecording(){
         console.log('=stopping recording=')
         isRecording = false
@@ -148,20 +122,38 @@ export default function VoiceInput(props){
             await _recording.stopAndUnloadAsync();
             await Audio.setAudioModeAsync({ allowsRecordingIOS: false })
         } catch (error) {
-            console.log(error); // eslint-disable-line
+            console.log(error);
         }
+
         if (_recording) {
             localUri = _recording.getURI();
-            console.log('localUri: ', localUri);
             durationMillis = _recording.durationMillis
             _recording.setOnRecordingStatusUpdate(null);
         }
     }
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Speak / Play Recording ////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     async function loadAndPlayRecording(){
         audioItem = await _recording.createNewLoadedSoundAsync()
         await audioItem.sound.playAsync()
     }
 
+    function speak(minutes) {
+        var thingToSay = `Bus 8 will be here in ${minutes} minutes.`;
+        Speech.speak(thingToSay);
+        console.log('speaking...=========')
+    }
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Delete Recording //////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+    async function resetRecording(){
+        await deleteRecordingFile();
+        _recording = null;
+    }
+    
     async function deleteRecordingFile(){
         console.log("=Deleting file=");
         try {
@@ -175,20 +167,9 @@ export default function VoiceInput(props){
         }
     }
 
-    async function resetRecording(){
-        await deleteRecordingFile();
-        _recording = null;
-    }
-
-    speak = (minutes) => {
-        var thingToSay = `Bus 8 will be here in ${minutes} minutes.`;
-        Speech.speak(thingToSay);
-        console.log('speaking...=========')
-    }
-
-    const num = 2400
-    const bool = true
-
+//////////////////////////////////////////////////////////////////////////////////////
+// Render Voice-Button ///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     if (displayButton){
         image = (
             <Image
@@ -211,12 +192,22 @@ export default function VoiceInput(props){
             rippleDuration={num}
             rippleCentered={bool}
             onPressIn={() => handleOnPressIn()}
-            onPressOut={() => handleOnPressOut()}
+            // onPressOut={() => handleOnPressOut()}
+            onPressOut={() => setTimeout(() => { handleOnPressOut()}, 300)}
         >
+            
             {image}
         </Ripple>
     )
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Button Styling ////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+const { width } = Dimensions.get("screen");
+const num = 2400;
+const bool = true;
+let image;
 
 let styles = StyleSheet.create({
     showButton: {
@@ -231,3 +222,4 @@ let styles = StyleSheet.create({
         alignSelf: "center",
     }
 })
+
