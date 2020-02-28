@@ -53,7 +53,7 @@ export default function VoiceInput(props){
 
             hideButtonHandler();
             doneHandler(json)
-            speak(busData.closest_stop.closest_minutes)
+            speak(json.closest_stop.closest_minutes)
 
 
         } catch (error) {
