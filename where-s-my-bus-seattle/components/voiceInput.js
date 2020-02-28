@@ -108,23 +108,26 @@ export default function VoiceInput(props){
 
     async function startRecording(){
         console.log('=starting recording=')
-        const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-        if (status !== 'granted'){return;}
+        const permission = Audio.getPermissionsAsync();
+        if (permission){
+            // const status = Audio.requestPermissionsAsync();
+            // const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+            // if (status !== 'granted'){return;}
 
-        isRecording = true
-        _recording = new Audio.Recording();
+            isRecording = true
+            _recording = new Audio.Recording();
 
-        // some of these are not applicable, but are required
-        await Audio.setAudioModeAsync({
-            allowsRecordingIOS: true,
-            interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-            playsInSilentModeIOS: true,
-            shouldDuckAndroid: true,
-            interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-            playThroughEarpieceAndroid: true,
+            // some of these are not applicable, but are required
+            await Audio.setAudioModeAsync({
+                allowsRecordingIOS: true,
+                interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+                playsInSilentModeIOS: true,
+                shouldDuckAndroid: true,
+                interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+                playThroughEarpieceAndroid: true,
 
-        });
-
+            });
+        } else{Audio.requestPermissionsAsync();}
         try {
             await _recording.prepareToRecordAsync(recordingOptions);
             await _recording.startAsync();
