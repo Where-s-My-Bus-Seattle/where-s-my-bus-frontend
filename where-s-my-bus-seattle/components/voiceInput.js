@@ -35,6 +35,9 @@ export default function VoiceInput(props){
     let doneHandler = props.doneHandler
     let hideHandler = props.hideHandler
     let _recording = null
+    let localUri = null
+    let audioItem = {}
+    let durationMillis = 0
     let isRecording = false
     let displayButton = props.displayButton
 
@@ -43,10 +46,10 @@ export default function VoiceInput(props){
     async function getTranscription(){
         toggleIsFetching(true)
         try {
-            const uri = _recording.getURI();
+            // const uri = _recording.getURI();
             let wav = new FormData();
             wav.append('file', {
-                uri: uri,
+                uri: localUri,
                 name: `test.wav`,
                 type: `audio/wav`,
               });
@@ -82,8 +85,8 @@ export default function VoiceInput(props){
             }
 
             doneHandler(busData)
-
-            speak(busData.closest_stop.closest_minutes)
+            // playRecording(uri);
+            // speak(busData.closest_stop.closest_minutes)
 
         } catch (error) {
                 console.log('There was an error', error);
@@ -102,8 +105,9 @@ export default function VoiceInput(props){
     async function handleOnPressOut(){
         console.log('=pressed out=')
         await stopRecording();
+        await createAndLoadNewSoundObject();
         await getTranscription();
-        hideHandler()
+        hideHandler();
     }
 
     async function startRecording(){
@@ -113,7 +117,7 @@ export default function VoiceInput(props){
             // const status = Audio.requestPermissionsAsync();
             // const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
             // if (status !== 'granted'){return;}
-
+            // await Audio.setAudioModeAsync({ allowsRecordingIOS: true })
             isRecording = true
             _recording = new Audio.Recording();
 
@@ -125,7 +129,6 @@ export default function VoiceInput(props){
                 shouldDuckAndroid: true,
                 interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
                 playThroughEarpieceAndroid: true,
-
             });
         } else{Audio.requestPermissionsAsync();}
         try {
@@ -138,15 +141,83 @@ export default function VoiceInput(props){
         console.log('should be a recording uri: ', _recording._uri)
     }
 
+    // onEndRecording: props => async () => {
+    //     try {
+    //       await props.recording.stopAndUnloadAsync();
+    //       await props.setAudioMode({ allowsRecordingIOS: false });
+    //     } catch (error) {
+    //       console.log(error); // eslint-disable-line
+    //     }
+  
+    //     if (props.recording) {
+    //       const fileUrl = props.recording.getURI();
+    //       props.recording.setOnRecordingStatusUpdate(null);
+    //       props.setState({ recording: null, fileUrl });
+    //     }
+    // },
     async function stopRecording(){
         console.log('=stopping recording=')
         isRecording = false
-        await _recording.stopAndUnloadAsync();
+        try {
+            await _recording.stopAndUnloadAsync();
+            await Audio.setAudioModeAsync({ allowsRecordingIOS: false })
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+        }
+        if (_recording) {
+            localUri = _recording.getURI();
+            console.log('localUri: ', localUri);
+            durationMillis = _recording.durationMillis
+            _recording.setOnRecordingStatusUpdate(null);
+            // _recording = null
+        }
     }
+    function makeAudioObject(){
+        audioItem = {
+            id: uuid(),
+            audioUrl: localUri,
+            duration: durationMillis,
+        };
+    }
+    async function createAndLoadNewSoundObject(){
+        let newSoundObject = await _recording.createNewLoadedSoundAsync()
+        // const soundObject = new Audio.Sound();
+
+        // await soundObject.loadAsync(newSoundObject);
+        // await soundObject.playAsync();
+        console.log('new sound obj: ', newSoundObject)
+        await newSoundObject.sound.playAsync()
+        // playRecording(newSoundObject.sound);
+    }
+    // async function playRecording(uri) {
+    //     uri = {"uri": uri}
+    //     console.log('the "uri" that we are "playing": ', uri)
+    //     await Audio.setIsEnabledAsync(true);
+    //     let newSoundObject = await _recording.createNewLoadedSoundAsync()
+    //     // const sound = Audio.Sound.create(uri, }, onPlaybackStatusUpdate = null, downloadFirst = true)
+    //     // const sound = new Audio.Sound();
+    //     // await sound.loadAsync(uri);
+    //     console.log('here??')
+    //     await newSoundObject.playAsync();
+    //     console.log('ere????xxx')
+    // }
+    async function playRecording(uri){
+        onPlaybackStatusUpdate = ({
+            durationMillis,
+            positionMillis,
+            isPlaying,
+            isLooping,
+            didJustFinish,
+        })
+
+        sound = await Audio.Sound.createAsync({ uri: localUri }, { shouldPlay: true }, onPlaybackStatusUpdate)
+
+    }
+
 
     async function deleteRecordingFile(){
         console.log("=Deleting file=");
-        console.log('recording ', _recording)
+        console.log('recording ', audioItem)
         try {
             const info = await FileSystem.getInfoAsync(_recording.getURI());
             await FileSystem.deleteAsync(info.uri)
