@@ -10,8 +10,6 @@ export default function BusMap(props) {
                     style={styles.mapStyle}
                     customMapStyle={customizedMap}
                     initialRegion={{
-                        // latitude: props.lat,
-                        // longitude: props.long,
                         latitude: props.closest.closestLat,
                         longitude: props.closest.closestLon,
                         latitudeDelta: 0.022,

@@ -15,14 +15,7 @@ import ModalFeedback from "./components/modalFeedback";
 // https://fostermade.co/blog/making-speech-to-text-work-with-react-native-and-expo
 // Guide used to help with recording
 
-let homeButton;
-let button;
-let busmap;
-let results;
-let textInput;
-let heading;
-let bottomString;
-let modalFeedback;
+console.disableYellowBox = true;
 
 export default class App extends React.Component {
     // APP is concerned with
@@ -51,14 +44,17 @@ export default class App extends React.Component {
             location: null,
             lat: null,
             long: null,
-            // lat: 47.5899628,
-            // long: -122.2691655,
             errorMessage: null,
             displayMap: false,
+            displayButton: true,
         };
         this.handleInputField = this.handleInputField.bind(this)
+        this.hideButtonDisplay = this.hideButtonDisplay.bind(this)
     }
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Get User's Location ///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     componentDidMount() {
         this._getLocationAsync();
     }
@@ -71,17 +67,29 @@ export default class App extends React.Component {
             });
         }
 
-        let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High});
+        // more accurate
+        // let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High});
+        
+        // fast
+        let location = await Location.getLastKnownPositionAsync();
+        Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High});
         
         this.setState({ location });
         this.setState({ lat: location.coords.latitude });
         this.setState({ long: location.coords.longitude });
         console.log('============GOT LOCATION=================')
     };
-    
+
+//////////////////////////////////////////////////////////////////////////////////////
+// "Done" Handler ( Input / Voice ) ////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+    hideButtonDisplay(){
+        this.setState({ displayButton: false })
+    }
+
     handleInputField(data){
         if (data.status === 'bad'){
-            this.setState({errorMessage: data.error})
+            this.setState({errorMessage: data.error, displayButton: true})
             return
         }
 
@@ -107,7 +115,11 @@ export default class App extends React.Component {
         })
     }
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Rendering /////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
     render() {
+        // if there is an error message, show it.
         if (this.state.errorMessage){
             bottomString = (
                 <Text style={styles.errorText}>
@@ -121,24 +133,27 @@ export default class App extends React.Component {
                 </Text>
             ) 
         }
+
+        // When we have user's location, show the button
         if (this.state.lat && this.state.long){
             button = (
-                <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+                <VoiceInput doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} displayButton={this.state.displayButton} lat={this.state.lat} long={this.state.long}/>
             );
+            console.log('this.state.displayButton: ', this.state.displayButton)
         } else {
             button = (<></>);
         }
+
+        // define components to render based on if we are showing a map or not
         if (this.state.displayMap) {
             busmap = (
                 <BusMap
-                    // lat={this.state.lat}
-                    // long={this.state.long}
                     closest={this.state.closestData}
                     nextClosest={this.state.nextClosestData}
                 />
             );
             homeButton = (
-                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false})}>
+                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false, displayButton: true})}>
                     <Image source={require("./components/button_another.png")} />
                 </TouchableOpacity>
             );
@@ -150,14 +165,13 @@ export default class App extends React.Component {
                 />
             );
             textInput = (<></>)
-            button = (<></>)
             bottomString = (<></>)
             textCarousel = (<></>)
             heading = (<></>)
             modalFeedback = (<></>)
         } else {
             textInput = (
-                <InputField doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
+                <InputField doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} lat={this.state.lat} long={this.state.long}/>
             );
             homeButton = (<></>)
             busmap = (<></>)
@@ -187,6 +201,7 @@ export default class App extends React.Component {
             // );
         }
 
+        // Return the view
         return (
             <KeyboardAvoidingView style={styles.mainViewContainer} behavior="position">
                 {heading}
@@ -204,6 +219,18 @@ export default class App extends React.Component {
         );
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Styling ///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+let homeButton;
+let button;
+let busmap;
+let results;
+let textInput;
+let heading;
+let bottomString;
+let modalFeedback;
 
 const styles = StyleSheet.create({
     mainViewContainer: {
@@ -240,10 +267,8 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: "bold",
         alignSelf: "center"
-    }
+    },
 });
 
-// TODO: what is this?
-console.disableYellowBox = true;
 
 

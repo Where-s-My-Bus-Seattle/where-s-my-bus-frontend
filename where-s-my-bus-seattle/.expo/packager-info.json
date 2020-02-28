@@ -3,7 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerNgrokUrl": "https://2e-fur.nastinsk.where-s-my-bus-seattle.exp.direct",
+  "packagerNgrokUrl": "https://packager.2e-fur.nastinsk.where-s-my-bus-seattle.exp.direct",
+  "ngrokPid": 98523
 }
