@@ -65,12 +65,13 @@ export default class App extends React.Component {
                 errorMessage: "Permission to access location was denied"
             });
         }
-        
+
         // more accurate
         // let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High});
         
         // fast
         let location = await Location.getLastKnownPositionAsync();
+        Location.getCurrentPositionAsync({accuracy:Location.Accuracy.High});
         
         this.setState({ location });
         this.setState({ lat: location.coords.latitude });

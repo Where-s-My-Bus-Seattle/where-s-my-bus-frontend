@@ -33,8 +33,8 @@ export default function VoiceInput(props){
         try {
             let wav = new FormData();
             wav.append('file', {
-                // uri: audioItem,
-                uri: localUri,
+                uri: audioItem.sound,
+                // uri: localUri,
                 name: `test.wav`,
                 type: `audio/wav`,
               });
@@ -192,8 +192,10 @@ export default function VoiceInput(props){
             rippleDuration={num}
             rippleCentered={bool}
             onPressIn={() => handleOnPressIn()}
-            onPressOut={() => handleOnPressOut()}
+            // onPressOut={() => handleOnPressOut()}
+            onPressOut={() => setTimeout(() => { handleOnPressOut()}, 300)}
         >
+            
             {image}
         </Ripple>
     )
