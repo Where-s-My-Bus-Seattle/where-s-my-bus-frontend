@@ -91,11 +91,13 @@ export default function VoiceInput(props){
 // Start Recording ///////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
     async function startRecording(){
+
+
+
         console.log('\n');
         console.log('=starting recording=');
-        const permission = Audio.getPermissionsAsync();
-
-        if (permission) {
+        let permission = await Audio.getPermissionsAsync();
+        if (permission.status === 'granted') {
             isRecording = true;
             _recording = new Audio.Recording();
 
@@ -108,18 +110,19 @@ export default function VoiceInput(props){
                 playThroughEarpieceAndroid: true,
             });
 
+            try {
+                await _recording.prepareToRecordAsync(recordingOptions);
+                await _recording.startAsync();
+            } catch (error) {
+                console.log('Error starting recording: ', error);
+                stopRecording();
+            }
+            console.log('should be a recording uri: ', _recording._uri);
+
         } else {
-            Audio.requestPermissionsAsync();
+            await Audio.requestPermissionsAsync();
         }
 
-        try {
-            await _recording.prepareToRecordAsync(recordingOptions);
-            await _recording.startAsync();
-        } catch (error) {
-            console.log('Error starting recording: ', error);
-            stopRecording();
-        }
-        console.log('should be a recording uri: ', _recording._uri);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -207,7 +210,7 @@ export default function VoiceInput(props){
             rippleCentered={bool}
             onPressIn={() => handleOnPressIn()}
             // onPressOut={() => handleOnPressOut()}
-            onPressOut={() => setTimeout(() => { handleOnPressOut()}, 300)}
+            onPressOut={() => setTimeout(() => { handleOnPressOut()}, 500)}
         >
             
             {image}

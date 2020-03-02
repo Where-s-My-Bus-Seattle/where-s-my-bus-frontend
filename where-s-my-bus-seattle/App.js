@@ -50,6 +50,7 @@ export default class App extends React.Component {
         };
         this.handleInputField = this.handleInputField.bind(this)
         this.hideButtonDisplay = this.hideButtonDisplay.bind(this)
+        this.goHomeHandler = this.goHomeHandler.bind(this)
     }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +66,7 @@ export default class App extends React.Component {
             this.setState({
                 errorMessage: "Permission to access location was denied"
             });
+            // let { status } = await Permissions.askAsync(Permissions.LOCATION);
         }
 
         // more accurate
@@ -78,6 +80,13 @@ export default class App extends React.Component {
         this.setState({ lat: location.coords.latitude });
         this.setState({ long: location.coords.longitude });
         console.log('============GOT LOCATION=================')
+
+        if(46.9 < this.state.lat && this.state.lat < 48.34 && -123.75 < this.state.long && this.state.long < -121.55){
+            console.log('in P.S')
+        } else {
+            console.log('not in P.S')
+            this.setState({ errorMessage: "Outside Puget Sound" })
+        }
     };
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -85,6 +94,10 @@ export default class App extends React.Component {
 //////////////////////////////////////////////////////////////////////////////////////
     hideButtonDisplay(){
         this.setState({ displayButton: false })
+    }
+    goHomeHandler(){
+        this._getLocationAsync()
+        this.setState({displayMap: false, displayButton: true})
     }
 
     handleInputField(data){
@@ -153,7 +166,7 @@ export default class App extends React.Component {
                 />
             );
             homeButton = (
-                <TouchableOpacity style={styles.homeButton} onPress={() => this.setState({displayMap: false, displayButton: true})}>
+                <TouchableOpacity style={styles.homeButton} onPress={() => this.goHomeHandler()}>
                     <Image source={require("./components/button_another.png")} />
                 </TouchableOpacity>
             );
