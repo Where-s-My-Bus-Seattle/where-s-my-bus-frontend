@@ -1,8 +1,7 @@
-import React, { Component, Fragment } from "react";
-import { View, StyleSheet, Dimensions, Image } from "react-native";
+import React from "react";
+import { StyleSheet, Dimensions, Image } from "react-native";
 import * as FileSystem from 'expo-file-system';
 import * as Speech from 'expo-speech';
-import * as Permissions from "expo-permissions";
 import { Audio } from 'expo-av';
 import Ripple from "react-native-material-ripple";
 
@@ -22,7 +21,7 @@ export default function VoiceInput(props){
 
     let [isFetching, toggleIsFetching] = React.useState(false);
 
-    let recordingOptions = require('./recordingOptions').recordingOptions
+    const recordingOptions = require('./recordingOptions').recordingOptions
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Fetch Route Data //////////////////////////////////////////////////////////////////
@@ -30,30 +29,32 @@ export default function VoiceInput(props){
     async function getTranscriptionFromServer(){
         toggleIsFetching(true)
 
+        // reading in the audio file as a base64 encoded string
+        const options = { encoding: 'base64' };
+        const base64EncodedAudio = await FileSystem.readAsStringAsync(localUri, options);
+        // console.log(base64_encoded_audio);
+
         try {
-            let wav = new FormData();
-            wav.append('file', {
-                // uri: audioItem.sound,
-                uri: localUri,
-                name: `test.wav`,
-                type: `audio/wav`,
-              });
-            console.log('=WAV being sent=');
-            // console.log(wav._parts[0][1]);
-            console.log('lat/lon: ', lat, long)
 
             const response = await fetch(`http://138.68.251.254:8000/api/v1/${lat}/${long}`, {
                 method: 'POST',
-                body: wav,
+                body: base64EncodedAudio,
             })
 
             const json = await response.json();
             console.log('=response from the server:');
-            console.log(json);
+            // console.log(json.testing);
+
+            await FileSystem.writeAsStringAsync(localUri, json.testing, options)
+            await Audio.setIsEnabledAsync(true)
+
+            const soundObject = new Audio.Sound();
+            await soundObject.loadAsync({ uri: localUri });
+            await soundObject.playAsync();
 
             hideButtonHandler();
             doneHandler(json)
-            speak(json.closest_stop.closest_minutes)
+            // speak(json.closest_stop.closest_minutes)
 
 
         } catch (error) {
@@ -74,7 +75,7 @@ export default function VoiceInput(props){
     async function handleOnPressOut(){
         console.log('=pressed out=')
         await stopRecording();
-        await loadAndPlayRecording();
+        // await loadAndPlayRecording();
         await getTranscriptionFromServer();
     }
 
