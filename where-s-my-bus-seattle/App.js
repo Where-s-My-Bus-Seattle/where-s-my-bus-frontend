@@ -139,7 +139,7 @@ export default class App extends React.Component {
             button = (
                 <VoiceInput doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} displayButton={this.state.displayButton} lat={this.state.lat} long={this.state.long}/>
             );
-            console.log('this.state.displayButton: ', this.state.displayButton)
+            // console.log('this.state.displayButton: ', this.state.displayButton)
         } else {
             button = (<></>);
         }
