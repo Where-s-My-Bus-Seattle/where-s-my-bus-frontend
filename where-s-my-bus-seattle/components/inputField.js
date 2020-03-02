@@ -17,12 +17,17 @@ export default function InputField(props) {
 
     async function submitHandler() {
         let url = `http://138.68.251.254:8000/api/v1/${props.lat}/${props.long}/${busRoute}`;
+        console.log('\n');
+        console.log('=Form Request to Server=');
         console.log(url);
 
         const response = await fetch(url);
         const data = await response.json();
 
-        console.log(data)
+        console.log('\n')
+        console.log('=response from the server=');
+        console.log(data);
+
         props.doneHandler(data);
         props.hideHandler();
     }
