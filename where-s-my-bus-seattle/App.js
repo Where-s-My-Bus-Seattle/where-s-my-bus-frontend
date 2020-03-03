@@ -31,14 +31,16 @@ export default class App extends React.Component {
                 closestDirection: null,
                 closestMinutes: null,
                 closestLat: null,
-                closestLon: null
+                closestLon: null,
+                closestDestination: null
             },
             nextClosestData: {
                 nextClosestName: null,
                 nextClosestDirection: null,
                 nextClosestMinutes: null,
                 nextClosestLat: null,
-                nextClosestLon: null
+                nextClosestLon: null,
+                nextClosestDestination: null
             },
             serverBusRoute: "",
             location: null,
@@ -112,7 +114,8 @@ export default class App extends React.Component {
                 closestDirection: data.closest_stop.closest_direction,
                 closestMinutes: data.closest_stop.closest_minutes,
                 closestLat: data.closest_stop.closest_lat,
-                closestLon: data.closest_stop.closest_lon
+                closestLon: data.closest_stop.closest_lon,
+                closestDestination: data.closest_stop.closest_destination
             },        
             nextClosestData: {
                 nextClosestName: data.next_closest_stop.next_closest_name,
@@ -120,7 +123,9 @@ export default class App extends React.Component {
                     data.next_closest_stop.next_closest_direction,
                 nextClosestMinutes: data.next_closest_stop.next_closest_minutes,
                 nextClosestLat: data.next_closest_stop.next_closest_lat,
-                nextClosestLon: data.next_closest_stop.next_closest_lon
+                nextClosestLon: data.next_closest_stop.next_closest_lon,
+                nextClosestDestination: data.next_closest_stop.next_closest_destination
+
             },
             serverBusRoute: data.route,
             errorMessage: null,
