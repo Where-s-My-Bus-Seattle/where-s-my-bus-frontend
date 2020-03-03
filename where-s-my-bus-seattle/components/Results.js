@@ -17,11 +17,11 @@ export default class Results extends React.Component {
                     </View>
                     <View>
                         <Text style={styles.data}>
-                            {this.props.busNumber} ({this.props.closest.closestDestination}) will come to {this.props.closest.closestName}  in
+                            To {this.props.closest.closestDestination} will come to {this.props.closest.closestName}  in
                             <Text style={{color:'#29c7ac'}}> {this.props.closest.closestMinutes} min</Text>
                         </Text>
                         <Text style={styles.data}>
-                            {this.props.busNumber} ({this.props.nextClosest.nextClosestDestination}) will come to {this.props.nextClosest.nextClosestName} in
+                            To {this.props.nextClosest.nextClosestDestination} will come to {this.props.nextClosest.nextClosestName} in
                             <Text style={{color:'#29c7ac'}}> {this.props.nextClosest.nextClosestMinutes} min</Text>
                         </Text>
                     </View>
