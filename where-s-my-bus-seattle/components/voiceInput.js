@@ -32,7 +32,6 @@ export default function VoiceInput(props){
         // reading in the audio file as a base64 encoded string
         const options = { encoding: 'base64' };
         const base64EncodedAudio = await FileSystem.readAsStringAsync(localUri, options);
-        // console.log(base64_encoded_audio);
 
         try {
             let url = `http://138.68.251.254:8000/api/v1/${lat}/${long}`
@@ -56,11 +55,11 @@ export default function VoiceInput(props){
 
             const soundObject = new Audio.Sound();
             await soundObject.loadAsync({ uri: localUri });
-            await soundObject.playAsync();
+            // await soundObject.playAsync();
 
             hideButtonHandler();
             doneHandler(json);
-            // speak(json.closest_stop.closest_minutes);
+            speak(json);
 
 
         } catch (error) {
@@ -107,7 +106,7 @@ export default function VoiceInput(props){
                 playsInSilentModeIOS: true,
                 shouldDuckAndroid: true,
                 interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-                playThroughEarpieceAndroid: true,
+                playThroughEarpieceAndroid: false,
             });
 
             try {
@@ -154,8 +153,8 @@ export default function VoiceInput(props){
         await audioItem.sound.playAsync();
     }
 
-    function speak(minutes) {
-        var thingToSay = `Bus 8 will be here in ${minutes} minutes.`;
+    function speak(json) {
+        var thingToSay = `To ${json.closest_stop.closest_destination} will come to ${json.closest_stop.closest_name} in ${json.closest_stop.closest_minutes} minutes. To ${json.next_closest_stop.next_closest_destination} will come to ${json.next_closest_stop.next_closest_name} in ${json.next_closest_stop.next_closest_minutes} minutes`
         Speech.speak(thingToSay);
         console.log('speaking...=========');
     }
