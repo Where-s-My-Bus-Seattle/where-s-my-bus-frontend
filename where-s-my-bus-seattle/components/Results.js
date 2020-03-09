@@ -17,6 +17,7 @@ export default class Results extends React.Component {
                     </View>
                     <View>
                         <Text style={styles.data}>
+
                             To {this.props.closest.closestDestination} will come to {this.props.closest.closestName}  in
                             <Text style={{color:'#29c7ac'}}> {this.props.closest.closestMinutes} min</Text>
                         </Text>
