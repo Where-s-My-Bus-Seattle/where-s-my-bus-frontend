@@ -21,7 +21,27 @@ export default function VoiceInput(props){
 
     let [isFetching, toggleIsFetching] = React.useState(false);
 
-    const recordingOptions = require('./recordingOptions').recordingOptions;
+    // const recordingOptions = require('./recordingOptions').recordingOptions;
+    const recordingOptions = {
+        android: {
+          extension: '.wav',
+          outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+          audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+        },
+        ios: {
+          extension: '.wav',
+          audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+          sampleRate: 44100,
+          numberOfChannels: 1,
+          bitRate: 128000,
+          linearPCMBitDepth: 16,
+          linearPCMIsBigEndian: false,
+          linearPCMIsFloat: false,
+        },
+    };
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Fetch Route Data //////////////////////////////////////////////////////////////////
@@ -50,11 +70,11 @@ export default function VoiceInput(props){
             console.log('=response from the server:');
             console.log(json);
 
-            await FileSystem.writeAsStringAsync(localUri, json.testing, options);
-            await Audio.setIsEnabledAsync(true);
+            // await FileSystem.writeAsStringAsync(localUri, json.testing, options);
+            // await Audio.setIsEnabledAsync(true);
 
-            const soundObject = new Audio.Sound();
-            await soundObject.loadAsync({ uri: localUri });
+            // const soundObject = new Audio.Sound();
+            // await soundObject.loadAsync({ uri: localUri });
             // await soundObject.playAsync();
 
             hideButtonHandler();
@@ -154,7 +174,7 @@ export default function VoiceInput(props){
     }
 
     function speak(json) {
-        var thingToSay = `To ${json.closest_stop.closest_destination} will come to ${json.closest_stop.closest_name} in ${json.closest_stop.closest_minutes} minutes. To ${json.next_closest_stop.next_closest_destination} will come to ${json.next_closest_stop.next_closest_name} in ${json.next_closest_stop.next_closest_minutes} minutes`
+        var thingToSay = `Route ${json.route} to ${json.closest_stop.closest_destination} will come to ${json.closest_stop.closest_name} in ${json.closest_stop.closest_minutes} minutes. To ${json.next_closest_stop.next_closest_destination} will come to ${json.next_closest_stop.next_closest_name} in ${json.next_closest_stop.next_closest_minutes} minutes`
         Speech.speak(thingToSay);
         console.log('speaking...=========');
     }

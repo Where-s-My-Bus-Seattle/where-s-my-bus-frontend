@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet} from 'react-native';
 import Toggle from "./toggle"
+
+
 export default class ModalFeedback extends Component {
   state = {
     modalVisible: false,
