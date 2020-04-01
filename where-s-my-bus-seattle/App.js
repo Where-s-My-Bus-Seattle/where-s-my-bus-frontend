@@ -147,7 +147,7 @@ export default class App extends React.Component {
         } else {
             bottomString = (
                 <Text style={styles.opacityText}>
-                    Or type your bus number and tap
+                    Or type your bus and tap search
                 </Text>
             ) 
         }
@@ -225,12 +225,12 @@ export default class App extends React.Component {
                 {heading}
                 {textCarousel}
                 {button}
-                {modalFeedback}
                 {bottomString}
                 {textInput}
                 {results}
                 {busmap}
                 {homeButton}
+                {modalFeedback}
                 
                 
             </KeyboardAvoidingView>  
