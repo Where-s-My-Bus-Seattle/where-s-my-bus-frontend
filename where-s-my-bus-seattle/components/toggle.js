@@ -32,7 +32,7 @@ export default class Toggle extends Component{
 
 const styles = StyleSheet.create({
   question: {
-    fontWeight: "bold"
+    fontWeight: "bold",
   }
   
 });

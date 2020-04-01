@@ -6,6 +6,8 @@ import Toggle from "./toggle"
 export default class ModalFeedback extends Component {
   state = {
     modalVisible: false,
+    question1Visible: false,
+    question2Visible: false,
   };
 
   setModalVisible(visible) {
@@ -14,35 +16,39 @@ export default class ModalFeedback extends Component {
 
   render() {
     return (
-      <View style={{marginTop: 20}}>
-        <Modal 
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
-          <View style={{marginTop: 22}}>
-            <View>
+      <>
+        <View >
+          <Modal 
+            animationType="slide"
+            transparent={false}
+            visible={this.state.modalVisible}
+            // onRequestClose={() => {
+            //   Alert.alert('Modal has been closed.');
+            // }}
+          >
+            <View style={styles.mainView}>
+              <TouchableHighlight 
+                onPress ={() => {}}
+              >
+              
+              </TouchableHighlight>  
+                <Toggle question = "Is this app free?" style={styles.question}>
+                  <Text style={styles.question}>Yes, our app is free</Text>
+                </Toggle> 
 
-              <Toggle question = "Is this app free?">
-                <Text >Yes, our app is free</Text>
-              </Toggle> 
+                <Toggle question = "Where can I use this app?">
+                  <Text >Currently our app covers the Greater Puget Sound area. Community Transit, Everett Transit, King County Metro, Pierce Transit, Intercity Transit are currently covered. Additional support for Sounder Train services and Washington State Ferry services.</Text>
+                </Toggle> 
 
-              <Toggle question = "Where can I use this app?">
-                <Text >Currently our app covers the King County area</Text>
-              </Toggle> 
-
-              <TouchableHighlight
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}>
-                <Text>Hide Modal</Text>
-              </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}>
+                  <Text>Hide</Text>
+                </TouchableHighlight>
             </View>
-          </View>
-        </Modal>
-
+          </Modal>
+        </View>
         <TouchableHighlight
           onPress={() => {
             this.setModalVisible(true);
@@ -51,20 +57,28 @@ export default class ModalFeedback extends Component {
           style={styles.faqIcon} 
           source={require("./faq_logo.png")} />
         </TouchableHighlight>
-      </View>
+      </>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  faqIcon: {
-    width: 30,
-    height: 30,
-    marginTop: 0,
-    paddingTop:0,
-    alignSelf: 'flex-end'
+  mainView:{
+    marginTop: 50,
+    fontSize: 30,
+    
   },
-
+  faqIcon: {
+    width: 40,
+    height: 40,
+    top: -40,
+    right: 0,
+    position: "absolute",
+  },
+  question: {
+    padding: 10,
+    fontSize: 30,
+  },
   // not working
   modalStyles: {
     height: 200
