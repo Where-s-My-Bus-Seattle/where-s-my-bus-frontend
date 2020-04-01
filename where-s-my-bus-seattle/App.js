@@ -199,7 +199,7 @@ export default class App extends React.Component {
                     <TextCarousel>
                         <TextCarousel.Item>
                             <Text style={styles.opacityText}>
-                                Tap to speak
+                                Press and hold to speak
                             </Text>
                         </TextCarousel.Item>
                         <TextCarousel.Item>
