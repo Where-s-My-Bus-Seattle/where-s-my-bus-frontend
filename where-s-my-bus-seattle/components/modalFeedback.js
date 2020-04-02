@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet} from 'react-native';
+import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet, Dimensions} from 'react-native';
 import Constants from "expo-constants";
 
 import Toggle from "./toggle"
@@ -122,11 +122,12 @@ export default class ModalFeedback extends Component {
 
         </Modal>
         <TouchableHighlight
+          style={styles.faqHighlight}
           onPress={() => {
             this.setModalVisible(true);
           }}>
           <Image 
-          style={styles.faqIcon} 
+          style={styles.faqIcon}
           source={require("./faq_logo.png")} />
         </TouchableHighlight>
       </>
@@ -154,9 +155,11 @@ const styles = StyleSheet.create({
   faqIcon: {
     width: 40,
     height: 40,
-    top: -40,
+  },
+  faqHighlight: {
+    top: Dimensions.get("window").height * 0.45,
     right: 0,
-    position: "absolute",
+    position: "absolute",   
   },
   question: {
     borderWidth: 3,

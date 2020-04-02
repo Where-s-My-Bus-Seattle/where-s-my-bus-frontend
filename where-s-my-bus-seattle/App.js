@@ -274,8 +274,9 @@ const styles = StyleSheet.create({
     },
     homeButton: {
         height: "25%",
-        alignItems: "center",
-        justifyContent: "center",
+        alignSelf: "center",
+        position: "absolute",
+        top: Dimensions.get("window").height * 0.7,
     },
     appTitleHeader: {
         color: "#f7f5f5",

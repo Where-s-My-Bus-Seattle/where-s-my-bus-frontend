@@ -4,7 +4,6 @@ import { StyleSheet, View, Dimensions } from "react-native";
 
 export default function BusMap(props) {
     return (
-        <View style={styles.container}>
             <View>
                 <MapView
                     style={styles.mapStyle}
@@ -34,16 +33,6 @@ export default function BusMap(props) {
                     />
                 </MapView>
             </View>
-
-            {/* <Callout>
-                <View style={styles.calloutView} >
-                    <TextInput style={styles.calloutSearch}
-                        placeholder={"Search"}
-                    />
-                </View>
-            </Callout> */}
-            {/* aj: this allows us to add components to the map, leaving here for reference */}
-        </View>
     );
 }
 
@@ -56,7 +45,10 @@ const styles = StyleSheet.create({
     },
     mapStyle: {
         width: Dimensions.get("window").width * 0.9,
-        height: Dimensions.get("window").height * 0.6,
+        height: Dimensions.get("window").height * 0.4,
+        position: "absolute",
+        top: Dimensions.get("window").height * 0.1,
+        alignSelf: "center",
         borderRadius: 90
     },
 });
