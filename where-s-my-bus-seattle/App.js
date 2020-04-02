@@ -53,6 +53,7 @@ export default class App extends React.Component {
         this.handleInputField = this.handleInputField.bind(this)
         this.hideButtonDisplay = this.hideButtonDisplay.bind(this)
         this.goHomeHandler = this.goHomeHandler.bind(this)
+        this.handleLongRecording = this.handleLongRecording.bind(this)
     }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -132,6 +133,9 @@ export default class App extends React.Component {
             displayMap: true,
         })
     }
+    handleLongRecording(){
+        this.setState({ errorMessage: "Recording too long" })
+    }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Rendering /////////////////////////////////////////////////////////////////////////
@@ -155,7 +159,7 @@ export default class App extends React.Component {
         // When we have user's location, show the button
         if (this.state.lat && this.state.long){
             button = (
-                <VoiceInput doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} displayButton={this.state.displayButton} lat={this.state.lat} long={this.state.long}/>
+                <VoiceInput doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} longRecordingHandler={this.handleLongRecording} displayButton={this.state.displayButton} lat={this.state.lat} long={this.state.long}/>
             );
             // console.log('this.state.displayButton: ', this.state.displayButton)
         } else {
