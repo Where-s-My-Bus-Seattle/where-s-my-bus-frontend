@@ -12,12 +12,14 @@ export default function VoiceInput(props){
     let doneHandler = props.doneHandler;
     let hideButtonHandler = props.hideHandler;
     let displayButton = props.displayButton;
+    let longRecordingHandler = props.longRecordingHandler;
 
     let _recording = null;
     let localUri = null;
     let audioItem = {};
     let durationMillis = 0;
     let isRecording = false;
+    let notLongRecording;
 
     let [isFetching, toggleIsFetching] = React.useState(false);
 
@@ -95,6 +97,7 @@ export default function VoiceInput(props){
     async function handleOnPressIn() {
         console.log('\n');
         console.log('=pressed in=');
+        notLongRecording = true;
         await startRecording();
     }
 
@@ -103,16 +106,28 @@ export default function VoiceInput(props){
         console.log('=pressed out=');
         await stopRecording();
         // await loadAndPlayRecording();
-        await getTranscriptionFromServer();
+        const info = await FileSystem.getInfoAsync(_recording.getURI());
+        let bigEnough = info.size > 60000;
+
+        console.log("notLongRecording: ", notLongRecording)
+        console.log("big enough: ", bigEnough)
+        
+        if(notLongRecording === true && bigEnough){
+            await getTranscriptionFromServer();
+        }
+    }
+
+    async function handleTooLongRecording(){
+        console.log('recording too long')
+        notLongRecording = false;
+        longRecordingHandler();
+        await stopRecording();
     }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Start Recording ///////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
     async function startRecording(){
-
-
-
         console.log('\n');
         console.log('=starting recording=');
         let permission = await Audio.getPermissionsAsync();
@@ -132,6 +147,11 @@ export default function VoiceInput(props){
             try {
                 await _recording.prepareToRecordAsync(recordingOptions);
                 await _recording.startAsync();
+                setTimeout(() => {
+                    if (isRecording){
+                        handleTooLongRecording();
+                    }
+                }, 6000);
             } catch (error) {
                 console.log('Error starting recording: ', error);
                 stopRecording();
@@ -148,6 +168,7 @@ export default function VoiceInput(props){
 // Stop Recording ////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
     async function stopRecording(){
+        if (isRecording === false){return};
         console.log('\n');
         console.log('=stopping recording=');
         isRecording = false;
@@ -228,7 +249,6 @@ export default function VoiceInput(props){
             rippleDuration={num}
             rippleCentered={bool}
             onPressIn={() => handleOnPressIn()}
-            // onPressOut={() => handleOnPressOut()}
             onPressOut={() => setTimeout(() => { handleOnPressOut()}, 500)}
         >
             
