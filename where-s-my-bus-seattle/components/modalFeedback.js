@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet, Dimensions} from 'react-native';
+import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import Constants from "expo-constants";
 
 import Toggle from "./toggle"
@@ -48,75 +48,77 @@ export default class ModalFeedback extends Component {
     return (
       <>
         <Modal 
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          // onRequestClose={() => {
-          //   Alert.alert('Modal has been closed.');
-          // }}
+            animationType="slide"
+            transparent={false}
+            visible={this.state.modalVisible}
+            // onRequestClose={() => {
+              //   Alert.alert('Modal has been closed.');
+              // }}
         >
           <View style={styles.mainView}>
-            <Text style={styles.title}>FAQ</Text>
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(1);
-              }}>
-              <Text style={styles.question}>Is this app free?</Text>
-            </TouchableHighlight>
+            <ScrollView>
+              <Text style={styles.title}>FAQ</Text>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(1);
+                }}>
+                <Text style={styles.question}>Is this app free?</Text>
+              </TouchableHighlight>
 
-            {answer1}
+              {answer1}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(2);
-              }}>
-              <Text style={styles.question}>Where can I use this app?</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(2);
+                }}>
+                <Text style={styles.question}>Where can I use this app?</Text>
+              </TouchableHighlight>
 
-            {answer2}
+              {answer2}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(3);
-              }}>
-              <Text style={styles.question}>Can I get directions?</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(3);
+                }}>
+                <Text style={styles.question}>Can I get directions?</Text>
+              </TouchableHighlight>
 
-            {answer3}
+              {answer3}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(4);
-              }}>
-              <Text style={styles.question}>Which stop will I be sent to?</Text>
-            </TouchableHighlight>
-            
-            {answer4}
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(4);
+                }}>
+                <Text style={styles.question}>Which stop will I be sent to?</Text>
+              </TouchableHighlight>
+              
+              {answer4}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(5);
-              }}>
-              <Text style={styles.question}>Press to speak is not working.</Text>
-            </TouchableHighlight>
-            
-            {answer5}
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(5);
+                }}>
+                <Text style={styles.question}>Press to speak is not working.</Text>
+              </TouchableHighlight>
+              
+              {answer5}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(6);
-              }}>
-              <Text style={styles.question}>What is this error message?</Text>
-            </TouchableHighlight> 
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(6);
+                }}>
+                <Text style={styles.question}>What is this error message?</Text>
+              </TouchableHighlight> 
 
-            {answer6}              
+              {answer6}              
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setModalVisible(!this.state.modalVisible);
-              }}>
-              <Text style={styles.hideButton}>Hide</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}>
+                <Text style={styles.hideButton}>Hide</Text>
+              </TouchableHighlight>
+            </ScrollView>
           </View>
 
 
@@ -138,7 +140,6 @@ export default class ModalFeedback extends Component {
 const styles = StyleSheet.create({
   mainView:{
     flex: 1,
-    alignItems: "center",
     paddingTop: Constants.statusBarHeight,
     backgroundColor: "#54123B",
   },

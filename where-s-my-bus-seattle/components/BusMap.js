@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get("window").width * 0.9,
         height: Dimensions.get("window").height * 0.4,
         position: "absolute",
-        top: Dimensions.get("window").height * 0.1,
+        top: Dimensions.get("window").height * 0.14,
         alignSelf: "center",
         borderRadius: 90
     },

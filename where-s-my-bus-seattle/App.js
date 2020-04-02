@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { View, StyleSheet, TouchableOpacity, Image, Text, KeyboardAvoidingView, Dimensions, } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image, Text, KeyboardAvoidingView, Dimensions, ScrollView, } from "react-native";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -175,7 +175,7 @@ export default class App extends React.Component {
                 />
             );
             homeButton = (
-                <TouchableOpacity style={styles.homeButton} onPress={() => this.goHomeHandler()}>
+                <TouchableOpacity style={styles.homeButtonHighlight} onPress={() => this.goHomeHandler()}>
                     <Image source={require("./components/button_another.png")} />
                 </TouchableOpacity>
             );
@@ -226,17 +226,17 @@ export default class App extends React.Component {
         // Return the view
         return (
             <KeyboardAvoidingView style={styles.mainViewContainer} behavior="position">
-                {heading}
-                {textCarousel}
-                {button}
-                {bottomString}
-                {textInput}
-                {results}
-                {busmap}
-                {homeButton}
-                {modalFeedback}
-                
-                
+                <ScrollView>
+                    {heading}
+                    {textCarousel}
+                    {button}
+                    {bottomString}
+                    {textInput}
+                    {results}
+                    {busmap}
+                    {homeButton}
+                    {modalFeedback}
+                </ScrollView>
             </KeyboardAvoidingView>  
         );
     }
@@ -274,6 +274,9 @@ const styles = StyleSheet.create({
     },
     homeButton: {
         height: "25%",
+        width: "25%"
+    },
+    homeButtonHighlight: {
         alignSelf: "center",
         position: "absolute",
         top: Dimensions.get("window").height * 0.7,
