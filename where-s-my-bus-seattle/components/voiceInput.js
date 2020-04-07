@@ -72,13 +72,6 @@ export default function VoiceInput(props){
             console.log('=response from the server:');
             console.log(json);
 
-            // await FileSystem.writeAsStringAsync(localUri, json.testing, options);
-            // await Audio.setIsEnabledAsync(true);
-
-            // const soundObject = new Audio.Sound();
-            // await soundObject.loadAsync({ uri: localUri });
-            // await soundObject.playAsync();
-
             hideButtonHandler();
             doneHandler(json);
             speak(json);
@@ -105,10 +98,10 @@ export default function VoiceInput(props){
         console.log('\n');
         console.log('=pressed out=');
         await stopRecording();
-        // await loadAndPlayRecording();
-        const info = await FileSystem.getInfoAsync(_recording.getURI());
-        let bigEnough = info.size > 60000;
 
+        const info = await FileSystem.getInfoAsync(_recording.getURI());
+        
+        let bigEnough = info.size > 60000;
         console.log("notLongRecording: ", notLongRecording)
         console.log("big enough: ", bigEnough)
         
@@ -250,8 +243,7 @@ export default function VoiceInput(props){
             rippleCentered={bool}
             onPressIn={() => handleOnPressIn()}
             onPressOut={() => setTimeout(() => { handleOnPressOut()}, 500)}
-        >
-            
+        >  
             {image}
         </Ripple>
     );
