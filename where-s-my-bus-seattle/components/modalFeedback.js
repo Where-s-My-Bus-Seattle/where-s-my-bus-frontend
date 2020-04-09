@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet} from 'react-native';
+import {Modal, Text, TouchableHighlight, View, Alert, Image, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import Constants from "expo-constants";
 
 import Toggle from "./toggle"
@@ -42,91 +42,94 @@ export default class ModalFeedback extends Component {
     if(this.state.question2Visible){answer2 = (<><Text style={styles.answer}>Currently our app covers the Greater Puget Sound area.</Text><Text style={styles.answer}>Serving: King County Metro, Community Transit, Pierce Transit, Everett Transit, Intercity Transit, Washington State Ferries, Sounder Train service</Text></>)};
     if(this.state.question3Visible){answer3 = (<Text style={styles.answer}>No - "Where's My Bus?" is currently designed for commuters who know the bus they need, they only want to know when it gets 'here' without having to enter directions or navigate a map.</Text>)}
     if(this.state.question4Visible){answer4 = (<Text style={styles.answer}>The closest stop to you! Given your current location, we search through the available stops for the route that you request. Then we display the two closest stops to you going opposite directions. For example: If you request Route 101, you will be shown Route 101's North-Bound Stop closest to you and Route 101's South-Bound Stop closest to you.</Text>)}
-    if(this.state.question5Visible){answer5 = (<Text style={styles.answer}>Make sure that you have allowed access to your microphone. For speech to work, you must hold down the button while you are speaking. Tapping the button will not make a complete recording.</Text>)}
+    if(this.state.question5Visible){answer5 = (<Text style={styles.answer}>Make sure that you have allowed access to your microphone. For speech to work, you must hold down the button while you are speaking. Tapping the button will not make a complete recording. (Also: does not function in most emulators)</Text>)}
     if(this.state.question6Visible){answer6 = (<><Text style={styles.answer}>If you see "Not Clean Data", there was an error with your request. Please check that the route that you entered is valid.</Text><Text style={styles.answer}>Otherwise, there has likely been an error with the route listing. Not all busses are running at all times. Certain segements of the day are guarenteed to not have any arrival times for the majority of routes. (1am to 4am for example)</Text></>)}
 
     return (
       <>
         <Modal 
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          // onRequestClose={() => {
-          //   Alert.alert('Modal has been closed.');
-          // }}
+            animationType="slide"
+            transparent={false}
+            visible={this.state.modalVisible}
+            // onRequestClose={() => {
+              //   Alert.alert('Modal has been closed.');
+              // }}
         >
           <View style={styles.mainView}>
-            <Text style={styles.title}>FAQ</Text>
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(1);
-              }}>
-              <Text style={styles.question}>Is this app free?</Text>
-            </TouchableHighlight>
+            <ScrollView>
+              <Text style={styles.title}>FAQ</Text>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(1);
+                }}>
+                <Text style={styles.question}>Is this app free?</Text>
+              </TouchableHighlight>
 
-            {answer1}
+              {answer1}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(2);
-              }}>
-              <Text style={styles.question}>Where can I use this app?</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(2);
+                }}>
+                <Text style={styles.question}>Where can I use this app?</Text>
+              </TouchableHighlight>
 
-            {answer2}
+              {answer2}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(3);
-              }}>
-              <Text style={styles.question}>Can I get directions?</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(3);
+                }}>
+                <Text style={styles.question}>Can I get directions?</Text>
+              </TouchableHighlight>
 
-            {answer3}
+              {answer3}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(4);
-              }}>
-              <Text style={styles.question}>Which stop will I be sent to?</Text>
-            </TouchableHighlight>
-            
-            {answer4}
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(4);
+                }}>
+                <Text style={styles.question}>Which stop will I be sent to?</Text>
+              </TouchableHighlight>
+              
+              {answer4}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(5);
-              }}>
-              <Text style={styles.question}>Press to speak is not working.</Text>
-            </TouchableHighlight>
-            
-            {answer5}
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(5);
+                }}>
+                <Text style={styles.question}>Press to speak is not working.</Text>
+              </TouchableHighlight>
+              
+              {answer5}
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setQuestionVisible(6);
-              }}>
-              <Text style={styles.question}>What is this error message?</Text>
-            </TouchableHighlight> 
+              <TouchableHighlight
+                onPress={() => {
+                  this.setQuestionVisible(6);
+                }}>
+                <Text style={styles.question}>What is this error message?</Text>
+              </TouchableHighlight> 
 
-            {answer6}              
+              {answer6}              
 
-            <TouchableHighlight
-              onPress={() => {
-                this.setModalVisible(!this.state.modalVisible);
-              }}>
-              <Text style={styles.hideButton}>Hide</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}>
+                <Text style={styles.hideButton}>Hide</Text>
+              </TouchableHighlight>
+            </ScrollView>
           </View>
 
 
         </Modal>
         <TouchableHighlight
+          style={styles.faqHighlight}
           onPress={() => {
             this.setModalVisible(true);
           }}>
           <Image 
-          style={styles.faqIcon} 
+          style={styles.faqIcon}
           source={require("./faq_logo.png")} />
         </TouchableHighlight>
       </>
@@ -137,7 +140,6 @@ export default class ModalFeedback extends Component {
 const styles = StyleSheet.create({
   mainView:{
     flex: 1,
-    alignItems: "center",
     paddingTop: Constants.statusBarHeight,
     backgroundColor: "#54123B",
   },
@@ -154,9 +156,11 @@ const styles = StyleSheet.create({
   faqIcon: {
     width: 40,
     height: 40,
-    top: -40,
+  },
+  faqHighlight: {
+    top: Dimensions.get("window").height * 0.45,
     right: 0,
-    position: "absolute",
+    position: "absolute",   
   },
   question: {
     borderWidth: 3,
