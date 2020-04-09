@@ -69,7 +69,6 @@ export default class App extends React.Component {
             this.setState({
                 errorMessage: "Permission to access location was denied"
             });
-            // let { status } = await Permissions.askAsync(Permissions.LOCATION);
         }
 
         // more accurate
@@ -161,7 +160,6 @@ export default class App extends React.Component {
             button = (
                 <VoiceInput doneHandler={this.handleInputField} hideHandler={this.hideButtonDisplay} longRecordingHandler={this.handleLongRecording} displayButton={this.state.displayButton} lat={this.state.lat} long={this.state.long}/>
             );
-            // console.log('this.state.displayButton: ', this.state.displayButton)
         } else {
             button = (<></>);
         }
@@ -218,9 +216,6 @@ export default class App extends React.Component {
                 <Text style={styles.appTitleHeader}>Where's My Bus?</Text>
             )
             modalFeedback=(<ModalFeedback />)
-            // button = (
-            //     <VoiceInput doneHandler={this.handleInputField} lat={this.state.lat} long={this.state.long}/>
-            // );
         }
 
         // Return the view
