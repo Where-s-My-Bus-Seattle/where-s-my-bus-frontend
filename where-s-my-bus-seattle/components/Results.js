@@ -38,7 +38,10 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
         alignItems: "center",
-        marginTop: "5%"
+        marginTop: "5%",
+
+        // for android build
+        marginBottom: "5%",
     },
     header: {
         color: "#f7f5f5",

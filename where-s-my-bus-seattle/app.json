@@ -4,7 +4,7 @@
     "slug": "wheres_my_bus",
     "privacy": "public",
     "sdkVersion": "36.0.0",
-    "description": "Application designed for commuters - You know what bus you want (it is the same one each day) and you also know where it goes. Find out quickly when your bus gets 'here'!",
+    "description": "Application designed for commuters - You know what bus you want (it is the same one each day) and you also know where it goes. Find out quickly when your bus gets 'here'!\n\n Scan the QR code (Android only) or click 'Open project in the browser' to try it out! Using the browser, 'Tap to play', scroll down in the emulator and click 'Open project using expo'.",
     "platforms": [
       "ios",
       "android",

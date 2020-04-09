@@ -37,17 +37,17 @@ export default function BusMap(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        // backgroundColor: '#fff',
-        alignItems: "center",
-        justifyContent: "center"
-    },
+    // container: {
+    //     flex: 1,
+    //     // backgroundColor: '#fff',
+    //     // alignItems: "center",
+    //     // justifyContent: "center"
+    // },
     mapStyle: {
         width: Dimensions.get("window").width * 0.9,
-        height: Dimensions.get("window").height * 0.4,
-        position: "absolute",
-        top: Dimensions.get("window").height * 0.14,
+        height: Dimensions.get("window").height * 0.45,
+        // position: "absolute",
+        // top: Dimensions.get("window").height * 0.14,
         alignSelf: "center",
         borderRadius: 90
     },

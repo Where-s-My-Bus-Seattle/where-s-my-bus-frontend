@@ -278,8 +278,9 @@ const styles = StyleSheet.create({
     },
     homeButtonHighlight: {
         alignSelf: "center",
-        position: "absolute",
-        top: Dimensions.get("window").height * 0.7,
+        marginTop: "5%",
+        // position: "absolute",
+        // top: Dimensions.get("window").height * 0.7,
     },
     appTitleHeader: {
         color: "#f7f5f5",
